@@ -2,6 +2,10 @@
 
 App web privada de wishlist para parejas. Mobile-first, instalable como PWA.
 
+Cada miembro tiene su lista personal, ve la de la otra persona, y puede reservar
+un regalo **sin que el dueño del deseo pueda descubrirlo** — garantizado por RLS,
+no por la interfaz. Hay además una lista conjunta y ocasiones como contexto.
+
 Stack: Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · Supabase
 (PostgreSQL + Auth + RLS) · Vercel.
 
@@ -20,6 +24,8 @@ npm run dev
 | `npm run build` | Build de producción |
 | `npm run lint` | ESLint |
 | `npx tsc --noEmit` | Comprobación de tipos |
+| `npm run test:db` | Tests de RLS sobre Postgres real (PGlite, sin Docker) |
+| `npm run test:e2e` | Recorrido del MVP en un navegador real (crea usuarios de prueba) |
 
 ## Despliegue en Vercel
 
