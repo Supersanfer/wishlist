@@ -14,7 +14,7 @@ export const metadata = { title: "Juntos" };
 
 const FLASH = {
   creado: "Añadido a vuestra lista",
-  guardado: "Cambios guardados",
+  guardado: "Guardado",
   eliminado: "Eliminado de vuestra lista",
 };
 
@@ -25,15 +25,15 @@ export default async function SharedPage({ searchParams }: PageProps<"/shared">)
 
   return (
     <AppPage>
-      <PageHeader title="Juntos" subtitle="Lo que queréis hacer o tener los dos." />
+      <PageHeader title="Los dos" subtitle="Lo que queréis hacer o tener juntos." />
 
       {flash ? <Flash message={flash} /> : null}
 
       {items.length === 0 ? (
         <EmptyState
-          icon={<TogetherIcon size={22} />}
-          title="Vuestra lista compartida"
-          message="Un viaje, una cena, algo para casa. Aquí cualquiera de los dos añade y edita."
+          icon={<TogetherIcon size={24} />}
+          title="Vuestra lista en común"
+          message="Un viaje, una cena, algo para casa. Aquí los dos añadís y editáis."
           action={
             <Link href="/shared/new" className={buttonClass()}>
               Añadir el primero

@@ -12,8 +12,8 @@ import Link from "next/link";
 export const metadata = { title: "Mi lista" };
 
 const FLASH = {
-  creado: "Deseo añadido a tu lista",
-  guardado: "Cambios guardados",
+  creado: "Añadido a tu lista",
+  guardado: "Guardado",
   eliminado: "Deseo eliminado",
 };
 
@@ -25,11 +25,11 @@ export default async function WishlistPage({ searchParams }: PageProps<"/wishlis
   return (
     <AppPage>
       <PageHeader
-        title="Mi lista"
+        title="Tu lista"
         subtitle={
           wishes.length === 0
             ? undefined
-            : `${wishes.length} ${wishes.length === 1 ? "deseo" : "deseos"} · tu pareja los ve`
+            : `${wishes.length} ${wishes.length === 1 ? "cosa que quieres" : "cosas que quieres"} · las ve tu pareja`
         }
       />
 
@@ -37,12 +37,12 @@ export default async function WishlistPage({ searchParams }: PageProps<"/wishlis
 
       {wishes.length === 0 ? (
         <EmptyState
-          icon={<GiftIcon size={22} />}
-          title="Tu lista está en blanco"
-          message="Apunta algo que te haga ilusión. Tu pareja lo verá y podrá regalártelo."
+          icon={<GiftIcon size={24} />}
+          title="Aquí todavía no hay nada"
+          message="Apunta algo que te apetezca. Tu pareja lo verá y podrá regalártelo sin spoilers."
           action={
             <Link href="/wishlist/new" className={buttonClass()}>
-              Añadir el primero
+              Añadir lo primero
             </Link>
           }
         />

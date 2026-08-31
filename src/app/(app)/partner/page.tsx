@@ -33,13 +33,13 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
 
   return (
     <AppPage>
-      <PageHeader title={`Lista de ${name}`} subtitle="Reserva un regalo. No verá nada." />
+      <PageHeader title={`Lo que quiere ${name}`} subtitle="Reserva un regalo. No se enterará." />
 
       {wishes.length === 0 ? (
         <EmptyState
-          icon={<TagHeartIcon size={22} />}
+          icon={<TagHeartIcon size={24} />}
           title={`${name} aún no ha pedido nada`}
-          message="Cuando añada su primer deseo aparecerá aquí y podrás reservarlo."
+          message="Cuando añada su primer deseo aparecerá aquí y podrás reservarlo en secreto."
         />
       ) : (
         <>

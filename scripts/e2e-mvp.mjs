@@ -224,7 +224,7 @@ console.log("\n== Alba: login y wishlist personal ==");
 const a = await newSession();
 const afterLogin = await login(a, alba);
 check("Alba entra y aterriza en /wishlist", afterLogin.url.endsWith("/wishlist"), afterLogin.url);
-check("estado vacio de la wishlist", afterLogin.text.includes("Tu lista está en blanco"), "");
+check("estado vacio de la wishlist", afterLogin.text.includes("Aquí todavía no hay nada"), "");
 
 await a.goto(`${BASE}/occasions/new`);
 await a.evaluate(`(() => {
@@ -263,6 +263,19 @@ const created = await a.settle((s) => s.url.includes("/wishlist?"));
 check("Alba crea un deseo", created.text.includes("AirPods Pro"), created.text.slice(0, 160));
 check("la tarjeta muestra precio", created.text.includes("199"), created.text.slice(0, 160));
 check("la tarjeta muestra la ocasion", created.text.includes("Mi cumpleaños"), created.text.slice(0, 200));
+
+const productLink = await a.evaluate(
+  `(() => {
+    const a = [...document.querySelectorAll('a')].find(x => /ver producto/i.test(x.textContent));
+    return a ? JSON.stringify({ href: a.href, target: a.target, rel: a.rel }) : null;
+  })()`,
+);
+const link = productLink ? JSON.parse(productLink) : null;
+check(
+  "hay enlace 'Ver producto' a la tienda",
+  Boolean(link) && link.href.includes("example.com/airpods") && link.target === "_blank" && /noopener/.test(link.rel),
+  String(productLink),
+);
 
 console.log("\n== Bruno: ve la lista de Alba y reserva ==");
 const b = await newSession();

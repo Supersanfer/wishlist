@@ -1,5 +1,6 @@
 import { Constants } from "@/types/database";
 import type { Enums } from "@/types/database";
+import { normalizeHttpUrl } from "@/lib/url";
 
 export type WishPriority = Enums<"wish_priority">;
 
@@ -61,21 +62,6 @@ function parsePrice(raw: string): { cents: number | null } | { error: string } {
   return { cents };
 }
 
-/** Normaliza una URL http/https, o devuelve el motivo por el que no vale. */
-function parseUrl(raw: string): { url: string | null } | { error: string } {
-  if (!raw) return { url: null };
-  let parsed: URL;
-  try {
-    parsed = new URL(raw);
-  } catch {
-    return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
-  }
-  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-    return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
-  }
-  return { url: parsed.toString() };
-}
-
 /**
  * Valida y normaliza los campos comunes en el servidor. No se apoya en la
  * validacion del navegador: los mismos limites que el esquema (longitudes,
@@ -92,10 +78,10 @@ export function parseItemForm(formData: FormData): { fields: ItemFields } | { er
     return { error: "La descripción es demasiado larga (máximo 2000)." };
   }
 
-  const url = parseUrl(field(formData, "url"));
+  const url = normalizeHttpUrl(field(formData, "url"));
   if ("error" in url) return { error: url.error };
 
-  const imageUrl = parseUrl(field(formData, "image_url"));
+  const imageUrl = normalizeHttpUrl(field(formData, "image_url"));
   if ("error" in imageUrl) {
     return { error: "Esa URL de imagen no es válida. Debe empezar por http:// o https://" };
   }

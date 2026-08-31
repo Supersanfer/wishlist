@@ -82,9 +82,9 @@ export default async function OccasionsPage({ searchParams }: PageProps<"/occasi
 
       {mine.length === 0 && theirs.length === 0 ? (
         <EmptyState
-          icon={<CalendarIcon size={22} />}
-          title="Sin fechas marcadas"
-          message="Tu cumpleaños, vuestro aniversario, Navidad. Luego podrás asociarles deseos."
+          icon={<CalendarIcon size={24} />}
+          title="Aún no hay fechas"
+          message="Tu cumpleaños, vuestro aniversario, Navidad… Luego podrás asociarles deseos."
           action={
             <Link href="/occasions/new" className={buttonClass()}>
               Crear la primera

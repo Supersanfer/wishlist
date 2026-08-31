@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ChevronDownIcon } from "@/components/icons";
+import { ChevronDownIcon, LinkIcon } from "@/components/icons";
 import { Field, Select, Textarea } from "@/components/ui";
 import { CURRENCIES } from "@/lib/wish-input";
 
@@ -68,10 +68,11 @@ export function ItemFields({
       />
 
       <Field
-        label="Enlace"
+        label="Enlace del producto"
         name="url"
         type="url"
         inputMode="url"
+        icon={<LinkIcon size={18} />}
         defaultValue={item?.url ?? ""}
         placeholder="https://…"
         autoComplete="off"

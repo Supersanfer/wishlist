@@ -66,7 +66,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-3 py-10 text-center">
-      <span className="mb-1 flex size-12 items-center justify-center rounded-full bg-surface-sunken text-muted">
+      <span className="mb-1 flex size-14 items-center justify-center rounded-full bg-accent-soft text-accent">
         {icon}
       </span>
       <h2 className="font-display display-sm">{title}</h2>

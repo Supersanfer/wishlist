@@ -77,9 +77,10 @@ function Label({ children }: { children: ReactNode }) {
 export function Field({
   label,
   hint,
+  icon,
   className = "",
   ...props
-}: ComponentProps<"input"> & { label: string; hint?: string }) {
+}: ComponentProps<"input"> & { label: string; hint?: string; icon?: ReactNode }) {
   const hintId = useId();
 
   return (
@@ -87,11 +88,18 @@ export function Field({
       <Label>{label}</Label>
       {/* El hint va por aria-describedby: dentro del label se pegaría al nombre
           accesible del campo ("Contraseña Al menos 8 caracteres"). */}
-      <input
-        className={`h-12 ${fieldLook} ${className}`}
-        aria-describedby={hint ? hintId : undefined}
-        {...props}
-      />
+      <div className="relative">
+        {icon ? (
+          <span className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-muted">
+            {icon}
+          </span>
+        ) : null}
+        <input
+          className={`h-12 ${fieldLook} ${icon ? "pl-10" : ""} ${className}`}
+          aria-describedby={hint ? hintId : undefined}
+          {...props}
+        />
+      </div>
       {hint ? (
         <span id={hintId} className="mt-1.5 block text-sm text-muted">
           {hint}
