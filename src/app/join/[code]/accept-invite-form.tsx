@@ -2,11 +2,12 @@
 
 import { useActionState } from "react";
 
-import { initialCoupleState, joinCouple } from "@/app/actions/couple";
+import { joinCouple } from "@/app/actions/couple";
+import { initialActionState } from "@/lib/form-state";
 import { Alert, SubmitButton } from "@/components/ui";
 
 export function AcceptInviteForm({ code }: { code: string }) {
-  const [state, formAction] = useActionState(joinCouple, initialCoupleState);
+  const [state, formAction] = useActionState(joinCouple, initialActionState);
 
   return (
     <form action={formAction} className="space-y-4">

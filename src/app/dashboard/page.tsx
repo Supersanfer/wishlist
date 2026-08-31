@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SignOutButton } from "@/components/sign-out-button";
@@ -6,11 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata = { title: "Wishlist" };
 
-const NEXT_UP = [
-  { icon: "🎁", label: "Tu wishlist" },
-  { icon: "💞", label: "La wishlist de tu pareja" },
-  { icon: "✈️", label: "Vuestra lista conjunta" },
-  { icon: "🎂", label: "Ocasiones" },
+const SECTIONS = [
+  { icon: "🎁", label: "Tu wishlist", href: "/wishlist" as const },
+  { icon: "💞", label: "La wishlist de tu pareja", href: null },
+  { icon: "✈️", label: "Vuestra lista conjunta", href: null },
+  { icon: "🎂", label: "Ocasiones", href: null },
 ];
 
 export default async function DashboardPage() {
@@ -40,21 +41,33 @@ export default async function DashboardPage() {
       </header>
 
       <section className="space-y-3">
-        <h2 className="text-xs font-medium tracking-wide text-muted uppercase">Muy pronto</h2>
         <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-          {NEXT_UP.map((item) => (
-            <li key={item.label} className="flex items-center gap-3 px-4 py-4">
-              <span aria-hidden className="text-lg">
-                {item.icon}
-              </span>
-              <span className="text-sm">{item.label}</span>
-              <span className="ml-auto text-xs text-muted">Próximamente</span>
-            </li>
-          ))}
+          {SECTIONS.map((item) => {
+            const row = (
+              <>
+                <span aria-hidden className="text-lg">
+                  {item.icon}
+                </span>
+                <span className="text-sm">{item.label}</span>
+                <span className="ml-auto text-xs text-muted">
+                  {item.href ? "→" : "Próximamente"}
+                </span>
+              </>
+            );
+
+            return (
+              <li key={item.label}>
+                {item.href ? (
+                  <Link href={item.href} className="flex items-center gap-3 px-4 py-4">
+                    {row}
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-3 px-4 py-4 opacity-60">{row}</div>
+                )}
+              </li>
+            );
+          })}
         </ul>
-        <p className="text-sm text-muted">
-          Ya estáis emparejados. La wishlist llega en la siguiente fase.
-        </p>
       </section>
 
       <div className="mt-auto pt-4">

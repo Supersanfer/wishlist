@@ -47,6 +47,14 @@ export async function getCoupleState(userId: string): Promise<CoupleState> {
   };
 }
 
+/** Usuario autenticado y con pareja completa. Puerta de las pantallas de la app. */
+export async function requirePairedUser(): Promise<User> {
+  const user = await requireUser();
+  const state = await getCoupleState(user.id);
+  if (!state.isComplete) redirect("/setup");
+  return user;
+}
+
 /** Destino segun el estado del usuario: pareja completa -> dashboard, si no -> setup. */
 export function destinationFor(state: CoupleState): "/dashboard" | "/setup" {
   return state.isComplete ? "/dashboard" : "/setup";

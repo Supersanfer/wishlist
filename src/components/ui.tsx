@@ -3,6 +3,10 @@
 import { useFormStatus } from "react-dom";
 import type { ComponentProps, ReactNode } from "react";
 
+const inputLook =
+  "w-full rounded-2xl border border-border bg-card px-4 text-base outline-none " +
+  "placeholder:text-muted focus:border-accent";
+
 const baseButton =
   "flex h-12 w-full items-center justify-center gap-2 rounded-2xl px-5 text-base " +
   "font-medium transition active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100";
@@ -45,12 +49,35 @@ export function Field({
   return (
     <label className="block">
       <span className="mb-1.5 block text-sm font-medium">{label}</span>
-      <input
-        className="h-12 w-full rounded-2xl border border-border bg-card px-4 text-base
-                   outline-none placeholder:text-muted focus:border-accent"
-        {...props}
-      />
+      <input className={`h-12 ${inputLook}`} {...props} />
       {hint ? <span className="mt-1.5 block text-xs text-muted">{hint}</span> : null}
+    </label>
+  );
+}
+
+export function Textarea({
+  label,
+  ...props
+}: ComponentProps<"textarea"> & { label: string }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium">{label}</span>
+      <textarea className={`min-h-24 py-3 ${inputLook}`} {...props} />
+    </label>
+  );
+}
+
+export function Select({
+  label,
+  children,
+  ...props
+}: ComponentProps<"select"> & { label: string }) {
+  return (
+    <label className="block">
+      <span className="mb-1.5 block text-sm font-medium">{label}</span>
+      <select className={`h-12 appearance-none ${inputLook}`} {...props}>
+        {children}
+      </select>
     </label>
   );
 }

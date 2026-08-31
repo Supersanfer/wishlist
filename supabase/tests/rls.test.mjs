@@ -314,6 +314,66 @@ await expectNoRowsAffected(
   else fail("aislamiento entre parejas", JSON.stringify(r.rows));
 }
 
+// El dueno gestiona lo suyo de punta a punta (crear / editar / borrar).
+await expectOk("Bianca edita su propio deseo", bianca, () =>
+  db.query("update public.wishlist_items set title = 'AirPods Pro 2', price_cents = 24900 where id = $1", [
+    itemB,
+  ]),
+);
+{
+  const r = await as(bianca, () =>
+    db.query("select title, price_cents from public.wishlist_items where id = $1", [itemB]),
+  );
+  if (r.rows[0]?.title === "AirPods Pro 2" && r.rows[0]?.price_cents === 24900)
+    ok("la edicion del dueno persiste");
+  else fail("persistencia de la edicion", JSON.stringify(r.rows));
+}
+await expectOk("Bianca cambia la prioridad de su deseo", bianca, () =>
+  db.query("update public.wishlist_items set priority = 'low' where id = $1", [itemB]),
+);
+// El WITH CHECK de la politica impide regalarle un deseo a la pareja.
+await expectDenied("no se puede cambiar el owner_id de un deseo propio", bianca, () =>
+  db.query("update public.wishlist_items set owner_id = $1 where id = $2", [anguita, itemB]),
+);
+// Peticion manipulada: Anguita apunta al deseo de Bianca sin filtrar por owner.
+await expectNoRowsAffected(
+  "un update manipulado sobre un deseo ajeno no afecta a nada",
+  anguita,
+  "update public.wishlist_items set title = 'Calcetines'",
+);
+await expectNoRowsAffected(
+  "un delete manipulado sobre un deseo ajeno no afecta a nada",
+  anguita,
+  "delete from public.wishlist_items",
+);
+{
+  // El dueno si puede borrar el suyo. Se recrea para no alterar lo que sigue.
+  const throwaway = (
+    await as(bianca, () =>
+      db.query(
+        "insert into public.wishlist_items (owner_id, title) values ($1, 'Prueba de borrado') returning id",
+        [bianca],
+      ),
+    )
+  ).rows[0].id;
+  const r = await as(bianca, () =>
+    db.query("delete from public.wishlist_items where id = $1", [throwaway]),
+  );
+  if (r.affectedRows === 1) ok("Bianca borra su propio deseo");
+  else fail("borrado del dueno", `afectadas ${r.affectedRows}`);
+}
+// La ocasion de la pareja sigue sin poder colarse por un update.
+await expectDenied("no se puede mover un deseo a la ocasion de la pareja", anguita, async () => {
+  const mine = await db.query(
+    "insert into public.wishlist_items (owner_id, title) values ($1, 'Mio') returning id",
+    [anguita],
+  );
+  return db.query("update public.wishlist_items set occasion_id = $1 where id = $2", [
+    occB,
+    mine.rows[0].id,
+  ]);
+});
+
 console.log("\n== wishlist conjunta ==");
 const sharedId = (
   await as(anguita, () =>

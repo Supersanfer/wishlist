@@ -46,4 +46,19 @@ export function friendlyCoupleError(message: string): string {
   ]);
 }
 
+export function friendlyWishError(message: string): string {
+  return match(message, [
+    // FK compuesta (occasion_id, owner_id) -> occasions(id, owner_id).
+    ["wishlist_items_occasion_same_owner", "Esa ocasión no es tuya."],
+    ["violates foreign key", "Esa ocasión ya no existe."],
+    ["violates row-level security", "No puedes modificar ese deseo."],
+    ["wishlist_items_title_check", "El nombre del deseo no es válido."],
+    ["price_cents", "Ese precio no es válido."],
+    ["currency", "Esa moneda no es válida."],
+    ["violates check constraint", "Algún dato del deseo no es válido."],
+    ["fetch failed", "No hemos podido conectar. Comprueba tu conexión."],
+    ["network", "No hemos podido conectar. Comprueba tu conexión."],
+  ]);
+}
+
 export { GENERIC as genericError };
