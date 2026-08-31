@@ -168,22 +168,35 @@ async function newSession() {
     for (let i = 0; i < 60; i++) {
       await new Promise((r) => setTimeout(r, 500));
       const snap = JSON.parse(
-        await evaluate("JSON.stringify({url: location.href, text: document.body.innerText})"),
+        await evaluate(`JSON.stringify({
+          url: location.href,
+          text: document.body.innerText,
+          alert: document.querySelector('[role=alert]')?.textContent ?? null
+        })`),
       );
       if (snap.text.includes("Cargando")) continue;
       if (predicate(snap)) return snap;
     }
     return JSON.parse(
-      await evaluate("JSON.stringify({url: location.href, text: document.body.innerText})"),
+      await evaluate(`JSON.stringify({
+        url: location.href,
+        text: document.body.innerText,
+        alert: document.querySelector('[role=alert]')?.textContent ?? null
+      })`),
     );
   };
 
   return { evaluate, goto, settle };
 }
 
+/**
+ * El formulario lo maneja React: pulsar antes de que hidrate no hace nada. En
+ * produccion la hidratacion tarda mas que en local, asi que se reintenta.
+ */
 async function login(session, user) {
   await session.goto(`${BASE}/login`);
-  await session.evaluate(`(() => {
+
+  const fill = `(() => {
     const set = (sel, v) => {
       const el = document.querySelector(sel);
       Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(el, v);
@@ -192,8 +205,19 @@ async function login(session, user) {
     set('input[name=email]', ${JSON.stringify(user.email)});
     set('input[name=password]', ${JSON.stringify(PASSWORD)});
     document.querySelector('form button[type=submit]').click();
-  })()`);
-  return session.settle((s) => !s.url.endsWith("/login"));
+    return true;
+  })()`;
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await new Promise((r) => setTimeout(r, 1200));
+    await session.evaluate(fill);
+
+    const snap = await session.settle((s) => !s.url.endsWith("/login") || Boolean(s.alert));
+    if (!snap.url.endsWith("/login")) return snap;
+    if (snap.alert) return snap;
+  }
+
+  return session.settle(() => true);
 }
 
 console.log("\n== Alba: login y wishlist personal ==");
