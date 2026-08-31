@@ -13,7 +13,11 @@ const fraunces = Fraunces({
   display: "swap",
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://wishlist-seven-zeta.vercel.app";
+
 export const metadata: Metadata = {
+  // Necesario para que las URL de compartir se resuelvan absolutas.
+  metadataBase: new URL(SITE_URL),
   title: { default: "Wishlist", template: "%s · Wishlist" },
   description:
     "Una lista privada para dos: apunta lo que te hace ilusión y reserva su regalo sin que se entere.",
@@ -35,7 +39,15 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "Wishlist",
     title: "Wishlist",
-    description: "Una lista privada para dos.",
+    description: "Una lista privada para dos. Reserva su regalo sin que se entere.",
+    locale: "es_ES",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Wishlist" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wishlist",
+    description: "Una lista privada para dos. Reserva su regalo sin que se entere.",
+    images: ["/og.png"],
   },
   formatDetection: { telephone: false, date: false, address: false, email: false },
 };

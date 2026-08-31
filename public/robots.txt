@@ -1,0 +1,6 @@
+# La portada y la privacidad son públicas; el resto exige sesión y no tiene
+# sentido rastrearlo.
+User-agent: *
+Allow: /$
+Allow: /privacidad
+Disallow: /
