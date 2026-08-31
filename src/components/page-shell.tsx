@@ -25,7 +25,7 @@ export function PageHeader({
   return (
     <header className="flex items-start justify-between gap-3">
       <div className="min-w-0">
-        <h1 className="font-display text-[1.6875rem] leading-8 break-words">{title}</h1>
+        <h1 className="font-display display-md break-words">{title}</h1>
         {subtitle ? <p className="mt-1 text-sm text-muted">{subtitle}</p> : null}
       </div>
       {action ? <div className="shrink-0 pt-0.5">{action}</div> : null}
@@ -48,7 +48,7 @@ export function FormHeader({ title, backTo }: { title: string; backTo: Route }) 
       >
         <ArrowLeftIcon size={20} />
       </Link>
-      <h1 className="font-display min-w-0 truncate text-xl leading-7">{title}</h1>
+      <h1 className="font-display display-sm min-w-0 truncate">{title}</h1>
     </header>
   );
 }
@@ -69,7 +69,7 @@ export function EmptyState({
       <span className="mb-1 flex size-12 items-center justify-center rounded-full bg-surface-sunken text-muted">
         {icon}
       </span>
-      <h2 className="font-display text-lg">{title}</h2>
+      <h2 className="font-display display-sm">{title}</h2>
       <p className="max-w-[26ch] text-sm text-muted">{message}</p>
       {action ? <div className="mt-2 w-full max-w-56">{action}</div> : null}
     </div>

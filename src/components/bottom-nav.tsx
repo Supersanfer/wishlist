@@ -12,19 +12,31 @@ const DESTINATIONS = [
   { href: "/me", label: "Yo", Icon: PersonIcon },
 ] as const;
 
+/** Rutas de formulario: allí la barra sólo roba viewport al teclado. */
+function isFormRoute(pathname: string): boolean {
+  return pathname.endsWith("/new") || pathname.endsWith("/edit");
+}
+
 export function BottomNav() {
   const pathname = usePathname();
+
+  if (isFormRoute(pathname)) return null;
 
   return (
     <nav
       aria-label="Secciones"
       // Sólida a propósito: el desenfoque de cristal es el tic visual que se
       // pretende evitar, y aquí sólo restaría legibilidad al contenido.
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-20 mx-auto max-w-[26rem] border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] sm:rounded-t-md sm:border-x"
     >
       <ul className="mx-auto flex max-w-[26rem]">
         {DESTINATIONS.map(({ href, label, Icon }) => {
-          const active = pathname === href || pathname.startsWith(`${href}/`);
+          // Las ocasiones se gestionan desde el perfil: mantienen "Yo" activo
+          // para que la barra nunca aparezca sin ninguna sección marcada.
+          const active =
+            pathname === href ||
+            pathname.startsWith(`${href}/`) ||
+            (href === "/me" && pathname.startsWith("/occasions"));
 
           return (
             <li key={href} className="flex-1">

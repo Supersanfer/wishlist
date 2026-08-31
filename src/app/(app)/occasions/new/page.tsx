@@ -1,4 +1,3 @@
-
 import { createOccasion } from "@/app/actions/occasions";
 import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";

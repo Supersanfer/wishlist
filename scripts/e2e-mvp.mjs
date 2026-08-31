@@ -170,7 +170,7 @@ async function newSession() {
       const snap = JSON.parse(
         await evaluate("JSON.stringify({url: location.href, text: document.body.innerText})"),
       );
-      if (snap.text.includes("Cargando…")) continue;
+      if (snap.text.includes("Cargando")) continue;
       if (predicate(snap)) return snap;
     }
     return JSON.parse(
@@ -200,7 +200,7 @@ console.log("\n== Alba: login y wishlist personal ==");
 const a = await newSession();
 const afterLogin = await login(a, alba);
 check("Alba entra y aterriza en /wishlist", afterLogin.url.endsWith("/wishlist"), afterLogin.url);
-check("estado vacio de la wishlist", afterLogin.text.includes("Todavía no tienes deseos"), "");
+check("estado vacio de la wishlist", afterLogin.text.includes("Tu lista está en blanco"), "");
 
 await a.goto(`${BASE}/occasions/new`);
 await a.evaluate(`(() => {
@@ -251,8 +251,8 @@ check("la cabecera nombra a Alba", partnerView.text.includes("Alba"), partnerVie
 check("hay boton de reservar", partnerView.text.includes("Reservar"), "");
 
 await b.evaluate(`[...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Reservar').click()`);
-const reserved = await b.settle((s) => s.text.includes("Reservado por ti"));
-check("Bruno reserva el regalo", reserved.text.includes("Reservado por ti"), reserved.text.slice(0, 200));
+const reserved = await b.settle((s) => /reservado por ti/i.test(s.text));
+check("Bruno reserva el regalo", /reservado por ti/i.test(reserved.text), reserved.text.slice(0, 200));
 
 console.log("\n== el secreto se mantiene ==");
 const albaAfter = await a.goto(`${BASE}/wishlist`).then(() => a.settle(() => true));
@@ -276,11 +276,11 @@ console.log("\n== filtro y compra ==");
 const filtered = await b.goto(`${BASE}/partner?filtro=mios`).then(() => b.settle(() => true));
 check("el filtro muestra lo reservado", filtered.text.includes("AirPods Pro"), filtered.text.slice(0, 160));
 
-await b.evaluate(`[...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Marcar comprado').click()`);
+await b.evaluate(`[...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Comprado').click()`);
 await new Promise((r) => setTimeout(r, 400));
-await b.evaluate(`[...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Sí, comprado').click()`);
-const purchased = await b.settle((s) => s.text.includes("Comprado por ti"));
-check("Bruno marca el regalo como comprado", purchased.text.includes("Comprado por ti"), purchased.text.slice(0, 200));
+await b.evaluate(`[...document.querySelectorAll('button')].find(x => x.textContent.trim() === 'Sí').click()`);
+const purchased = await b.settle((s) => /comprado por ti/i.test(s.text));
+check("Bruno marca el regalo como comprado", /comprado por ti/i.test(purchased.text), purchased.text.slice(0, 200));
 
 const albaAfter2 = await a.goto(`${BASE}/wishlist`).then(() => a.settle(() => true));
 check(

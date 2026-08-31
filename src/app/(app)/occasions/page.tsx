@@ -4,7 +4,7 @@ import { AddButton } from "@/components/add-button";
 import { Flash } from "@/components/flash";
 import { CalendarIcon, ChevronRightIcon } from "@/components/icons";
 import { AppPage, EmptyState, PageHeader } from "@/components/page-shell";
-import { Button } from "@/components/ui";
+import { buttonClass } from "@/components/ui";
 import { getCoupleState, requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
 import { countdownLabel, daysUntil, formatOccasionDate } from "@/lib/occasion-input";
@@ -39,7 +39,7 @@ function OccasionRow({ occasion, href }: { occasion: Occasion; href?: string }) 
           </span>
         </p>
       </div>
-      {href ? <ChevronRightIcon size={18} className="shrink-0 text-muted/70" /> : null}
+      {href ? <ChevronRightIcon size={18} className="shrink-0 text-muted" /> : null}
     </>
   );
 
@@ -48,7 +48,7 @@ function OccasionRow({ occasion, href }: { occasion: Occasion; href?: string }) 
       {href ? (
         <Link
           href={href}
-          className="flex min-h-16 items-center gap-3 px-4 py-3 transition active:bg-surface-sunken"
+          className="focus-inset flex min-h-16 items-center gap-3 px-4 py-3 transition active:bg-surface-sunken"
         >
           {content}
         </Link>
@@ -86,8 +86,8 @@ export default async function OccasionsPage({ searchParams }: PageProps<"/occasi
           title="Sin fechas marcadas"
           message="Tu cumpleaños, vuestro aniversario, Navidad. Luego podrás asociarles deseos."
           action={
-            <Link href="/occasions/new">
-              <Button>Crear la primera</Button>
+            <Link href="/occasions/new" className={buttonClass()}>
+              Crear la primera
             </Link>
           }
         />

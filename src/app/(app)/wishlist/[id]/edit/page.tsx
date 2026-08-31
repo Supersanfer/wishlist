@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 
-import { updateWish } from "@/app/actions/wishlist";
+import { deleteWish, updateWish } from "@/app/actions/wishlist";
+import { DeleteItem } from "@/components/delete-item";
 import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { listOccasionsOf } from "@/lib/queries/occasions";
 import { getOwnWish } from "@/lib/queries/wishlist";
 import { WishForm } from "../../wish-form";
-import { DeleteWish } from "./delete-wish";
 
 export const metadata = { title: "Editar deseo" };
 
@@ -35,7 +35,14 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
         pendingLabel="Guardando…"
       />
 
-      <DeleteWish id={wish.id} />
+      <DeleteItem
+        id={wish.id}
+        action={deleteWish}
+        label="Eliminar este deseo"
+        question="¿Eliminar este deseo? No se puede deshacer."
+        confirmLabel="Sí, eliminar"
+        pendingLabel="Eliminando…"
+      />
     </AppPage>
   );
 }

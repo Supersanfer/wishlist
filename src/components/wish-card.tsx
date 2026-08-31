@@ -96,7 +96,7 @@ export function WishCard({
                   href={wish.url ?? "#"}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 py-1 text-accent underline underline-offset-2"
+                  className="inline-flex min-h-11 items-center gap-1 py-2 text-accent underline underline-offset-2"
                 >
                   {host}
                   <ExternalLinkIcon size={13} />
@@ -120,7 +120,7 @@ export function WishCard({
       ) : null}
 
       {editHref ? (
-        <PencilIcon size={16} className="mt-0.5 shrink-0 self-start text-muted/60" />
+        <PencilIcon size={16} className="mt-0.5 shrink-0 self-start text-muted" />
       ) : null}
     </div>
   );
@@ -130,16 +130,16 @@ export function WishCard({
       className="animate-rise relative overflow-hidden rounded-md border border-border bg-surface"
       style={{ animationDelay: `${Math.min(index, 5) * 40}ms` }}
     >
+      {highlight ? <span aria-hidden className="absolute inset-0 bg-accent-soft/60" /> : null}
+
       {/* Prioridad alta: una barra a sangre, legible sin leyenda. */}
       {wish.priority === "high" ? (
-        <span aria-hidden className="absolute inset-y-0 left-0 w-0.5 bg-accent" />
+        <span aria-hidden className="absolute inset-y-0 left-0 z-10 w-0.5 bg-accent" />
       ) : null}
-
-      {highlight ? <span aria-hidden className="absolute inset-0 bg-accent-soft/60" /> : null}
 
       <div className="relative">
         {editHref ? (
-          <Link href={editHref} className="block transition active:bg-surface-sunken">
+          <Link href={editHref} className="focus-inset block transition active:bg-surface-sunken">
             {body}
           </Link>
         ) : (

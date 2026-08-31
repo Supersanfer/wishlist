@@ -86,7 +86,7 @@ function ConfirmAction({
     return (
       <div className="flex-1 space-y-2">
         {state.error ? <Alert>{state.error}</Alert> : null}
-        <button type="button" onClick={() => setAsking(true)} className={`${control} ${look}`}>
+        <button type="button" onClick={() => setAsking(true)} className={`${control} w-full ${look}`}>
           {icon}
           {label}
         </button>

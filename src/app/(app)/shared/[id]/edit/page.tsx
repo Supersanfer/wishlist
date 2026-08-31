@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 
-import { updateSharedItem } from "@/app/actions/shared";
+import { deleteSharedItem, updateSharedItem } from "@/app/actions/shared";
+import { DeleteItem } from "@/components/delete-item";
 import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { getSharedItem } from "@/lib/queries/shared";
 import { SharedForm } from "../../shared-form";
-import { DeleteSharedItem } from "./delete-shared-item";
 
 export const metadata = { title: "Editar elemento" };
 
@@ -25,7 +25,14 @@ export default async function EditSharedPage({ params }: PageProps<"/shared/[id]
         submitLabel="Guardar cambios"
         pendingLabel="Guardando…"
       />
-      <DeleteSharedItem id={item.id} />
+      <DeleteItem
+        id={item.id}
+        action={deleteSharedItem}
+        label="Eliminar de la lista"
+        question="¿Eliminarlo de vuestra lista? No se puede deshacer."
+        confirmLabel="Sí, eliminar"
+        pendingLabel="Eliminando…"
+      />
     </AppPage>
   );
 }

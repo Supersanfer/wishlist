@@ -49,7 +49,7 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
                 href="/partner"
                 aria-current={onlyMine ? undefined : "page"}
                 className={`${chip} ${
-                  onlyMine ? "border border-border text-muted" : "bg-accent-soft text-accent"
+                  onlyMine ? "border border-border text-muted" : "bg-accent text-accent-foreground"
                 }`}
               >
                 Todos
@@ -58,7 +58,7 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
                 href="/partner?filtro=mios"
                 aria-current={onlyMine ? "page" : undefined}
                 className={`${chip} ${
-                  onlyMine ? "bg-accent-soft text-accent" : "border border-border text-muted"
+                  onlyMine ? "bg-accent text-accent-foreground" : "border border-border text-muted"
                 }`}
               >
                 Reservados por ti

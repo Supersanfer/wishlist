@@ -2,7 +2,7 @@ import { AddButton } from "@/components/add-button";
 import { Flash } from "@/components/flash";
 import { GiftIcon } from "@/components/icons";
 import { AppPage, EmptyState, PageHeader } from "@/components/page-shell";
-import { Button } from "@/components/ui";
+import { buttonClass } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
@@ -41,8 +41,8 @@ export default async function WishlistPage({ searchParams }: PageProps<"/wishlis
           title="Tu lista está en blanco"
           message="Apunta algo que te haga ilusión. Tu pareja lo verá y podrá regalártelo."
           action={
-            <Link href="/wishlist/new">
-              <Button>Añadir el primero</Button>
+            <Link href="/wishlist/new" className={buttonClass()}>
+              Añadir el primero
             </Link>
           }
         />

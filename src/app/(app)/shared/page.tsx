@@ -4,7 +4,7 @@ import { AddButton } from "@/components/add-button";
 import { Flash } from "@/components/flash";
 import { TogetherIcon } from "@/components/icons";
 import { AppPage, EmptyState, PageHeader } from "@/components/page-shell";
-import { Button } from "@/components/ui";
+import { buttonClass } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
@@ -35,8 +35,8 @@ export default async function SharedPage({ searchParams }: PageProps<"/shared">)
           title="Vuestra lista compartida"
           message="Un viaje, una cena, algo para casa. Aquí cualquiera de los dos añade y edita."
           action={
-            <Link href="/shared/new">
-              <Button>Añadir el primero</Button>
+            <Link href="/shared/new" className={buttonClass()}>
+              Añadir el primero
             </Link>
           }
         />

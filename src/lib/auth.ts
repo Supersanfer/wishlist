@@ -1,3 +1,5 @@
+import { cache } from "react";
+
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
@@ -29,7 +31,7 @@ export async function requireUser(): Promise<User> {
  * Estado de emparejamiento leido de la base de datos. RLS limita couple_members
  * a la pareja propia, asi que no hace falta filtrar por usuario aqui.
  */
-export async function getCoupleState(userId: string): Promise<CoupleState> {
+export const getCoupleState = cache(async (userId: string): Promise<CoupleState> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("couple_members")
@@ -45,7 +47,7 @@ export async function getCoupleState(userId: string): Promise<CoupleState> {
     partnerId: partner?.user_id ?? null,
     isComplete: partner !== undefined,
   };
-}
+});
 
 /** Usuario autenticado y con pareja completa. Puerta de las pantallas de la app. */
 export async function requirePairedUser(): Promise<User> {

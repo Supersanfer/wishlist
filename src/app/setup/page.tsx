@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { AuthShell } from "@/components/auth-shell";
 import { Brand } from "@/components/brand";
 import { SignOutButton } from "@/components/sign-out-button";
 import { getCoupleState, requireUser } from "@/lib/auth";
@@ -30,16 +31,16 @@ export default async function SetupPage() {
     const code = invitation?.code ?? null;
 
     return (
-      <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
+      <AuthShell>
         <Brand subtitle="Ya casi. Solo falta que se una tu pareja." />
         <InviteCard code={code} link={code ? `${await siteOrigin()}/join/${code}` : null} />
         <SignOutButton />
-      </main>
+      </AuthShell>
     );
   }
 
   return (
-    <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
+    <AuthShell>
       <Brand subtitle="Para empezar, crea vuestra pareja o únete con una invitación." />
       <CreateCoupleCard />
       <div className="flex items-center gap-3 text-xs text-muted">
@@ -47,6 +48,6 @@ export default async function SetupPage() {
       </div>
       <JoinByCodeForm />
       <SignOutButton />
-    </main>
+    </AuthShell>
   );
 }

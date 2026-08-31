@@ -20,7 +20,7 @@ export function CreateCoupleCard() {
   return (
     <div className="space-y-4">
       <Button onClick={onCreate} disabled={pending}>
-        {pending ? "Creando…" : "Crear pareja ❤️"}
+        {pending ? "Creando…" : "Crear pareja"}
       </Button>
       {error ? <Alert>{error}</Alert> : null}
     </div>

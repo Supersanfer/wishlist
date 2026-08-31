@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 
 import { regenerateInvitation } from "@/app/actions/couple";
-import { Alert, Button } from "@/components/ui";
+import { Alert, Button, TextButton } from "@/components/ui";
 
 export function InviteCard({ code, link }: { code: string | null; link: string | null }) {
   const [copied, setCopied] = useState(false);
@@ -47,7 +47,7 @@ export function InviteCard({ code, link }: { code: string | null; link: string |
     <div className="space-y-4">
       <div className="space-y-4 rounded-md border border-border bg-surface p-5">
         <div>
-          <h2 className="text-lg font-semibold">Invita a tu pareja</h2>
+          <h2 className="font-display display-sm">Invita a tu pareja</h2>
           <p className="mt-1 text-sm text-muted">
             Compártele el enlace. Solo sirve una vez y caduca en 7 días.
           </p>
@@ -57,7 +57,7 @@ export function InviteCard({ code, link }: { code: string | null; link: string |
           {link}
         </p>
 
-        <Button onClick={copy}>{copied ? "¡Copiado! ✓" : "Copiar enlace"}</Button>
+        <Button onClick={copy}>{copied ? "Enlace copiado" : "Copiar enlace"}</Button>
 
         <div>
           <p className="text-sm font-medium">O dile este código:</p>
@@ -67,14 +67,13 @@ export function InviteCard({ code, link }: { code: string | null; link: string |
 
       {error ? <Alert>{error}</Alert> : null}
 
-      <button
-        type="button"
+      <TextButton
+        className="w-full disabled:opacity-50"
         onClick={regenerate}
         disabled={pending}
-        className="w-full text-center text-sm text-muted underline underline-offset-4 disabled:opacity-50"
       >
         {pending ? "Generando…" : "Generar un código nuevo"}
-      </button>
+      </TextButton>
     </div>
   );
 }

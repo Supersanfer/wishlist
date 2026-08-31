@@ -31,8 +31,7 @@ export function DeleteItem({
 
   if (!asking) {
     return (
-      <div className="space-y-3 border-t border-border pt-5">
-        {state.error ? <Alert>{state.error}</Alert> : null}
+      <div className="border-t border-border pt-5">
         <TextButton tone="danger" className="w-full" onClick={() => setAsking(true)}>
           {label}
         </TextButton>

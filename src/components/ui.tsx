@@ -1,69 +1,54 @@
-"use client";
-
-import { useFormStatus } from "react-dom";
+import { useId } from "react";
 import type { ComponentProps, ReactNode } from "react";
 
 import { ChevronDownIcon } from "@/components/icons";
 
+// Sin "use client": nada de aquí usa hooks de cliente, así que estos componentes
+// funcionan también dentro de Server Components y no engordan el bundle.
+// El único que necesita el cliente vive aparte y se reexporta al final.
+
 const SIZES = {
   sm: "h-9 px-4 text-sm",
   md: "h-11 px-5",
-  lg: "h-13 px-6",
+  lg: "h-12 px-6",
 } as const;
 
 const VARIANTS = {
-  primary: "bg-accent text-accent-foreground",
+  primary: "bg-accent text-accent-foreground focus-on-accent",
   secondary: "border border-border-strong bg-surface text-foreground",
-  ghost: "text-muted hover:bg-surface-sunken",
+  ghost: "text-muted",
   danger: "border border-danger/35 bg-surface text-danger",
 } as const;
 
-type ButtonProps = ComponentProps<"button"> & {
-  variant?: keyof typeof VARIANTS;
-  size?: keyof typeof SIZES;
-};
+export type ButtonVariant = keyof typeof VARIANTS;
+export type ButtonSize = keyof typeof SIZES;
+
+const BASE =
+  "inline-flex w-full items-center justify-center gap-2 rounded-md font-medium " +
+  "transition duration-150 select-none active:scale-[0.985] active:brightness-95 " +
+  "disabled:pointer-events-none disabled:opacity-45";
+
+/**
+ * Estilo de botón para elementos que no son `<button>`.
+ * Envolver un `<Button>` en un `<Link>` produce `<a><button>`, que es
+ * anidamiento interactivo inválido y una parada de tabulador de más.
+ */
+export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize = "md"): string {
+  return `${BASE} ${SIZES[size]} ${VARIANTS[variant]}`;
+}
 
 export function Button({
   variant = "primary",
   size = "md",
   className = "",
   ...props
-}: ButtonProps) {
-  return (
-    <button
-      className={`inline-flex w-full items-center justify-center gap-2 rounded-md
-        font-medium transition duration-150 select-none
-        active:scale-[0.985] active:brightness-95
-        disabled:pointer-events-none disabled:opacity-45
-        ${SIZES[size]} ${VARIANTS[variant]} ${className}`}
-      {...props}
-    />
-  );
-}
-
-/** Botón de envío que se desactiva solo mientras corre la Server Action. */
-export function SubmitButton({
-  children,
-  pendingLabel,
-  variant = "primary",
-  size = "md",
-}: {
-  children: ReactNode;
-  pendingLabel: string;
-  variant?: keyof typeof VARIANTS;
-  size?: keyof typeof SIZES;
-}) {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" variant={variant} size={size} disabled={pending} aria-busy={pending}>
-      {pending ? pendingLabel : children}
-    </Button>
-  );
+}: ComponentProps<"button"> & { variant?: ButtonVariant; size?: ButtonSize }) {
+  return <button className={`${buttonClass(variant, size)} ${className}`} {...props} />;
 }
 
 /**
- * Acción secundaria en texto. Lleva su propia altura de 44px: el patrón de
- * "enlace subrayado de 14px" dejaba objetivos táctiles de 20px.
+ * Acción secundaria en texto, con 44px reales de alto: el patrón de "enlace
+ * subrayado de 14px" dejaba objetivos táctiles de 20px.
  */
 export function TextButton({
   className = "",
@@ -83,7 +68,7 @@ export function TextButton({
 
 const fieldLook =
   "w-full rounded-md border border-border bg-surface px-3.5 text-base text-foreground " +
-  "outline-none transition-colors placeholder:text-muted/70 focus:border-accent";
+  "outline-none transition-colors placeholder:text-muted focus:border-accent";
 
 function Label({ children }: { children: ReactNode }) {
   return <span className="mb-1.5 block text-sm font-medium">{children}</span>;
@@ -95,19 +80,28 @@ export function Field({
   className = "",
   ...props
 }: ComponentProps<"input"> & { label: string; hint?: string }) {
+  const hintId = useId();
+
   return (
     <label className="block">
       <Label>{label}</Label>
-      <input className={`h-12 ${fieldLook} ${className}`} {...props} />
-      {hint ? <span className="mt-1.5 block text-sm text-muted">{hint}</span> : null}
+      {/* El hint va por aria-describedby: dentro del label se pegaría al nombre
+          accesible del campo ("Contraseña Al menos 8 caracteres"). */}
+      <input
+        className={`h-12 ${fieldLook} ${className}`}
+        aria-describedby={hint ? hintId : undefined}
+        {...props}
+      />
+      {hint ? (
+        <span id={hintId} className="mt-1.5 block text-sm text-muted">
+          {hint}
+        </span>
+      ) : null}
     </label>
   );
 }
 
-export function Textarea({
-  label,
-  ...props
-}: ComponentProps<"textarea"> & { label: string }) {
+export function Textarea({ label, ...props }: ComponentProps<"textarea"> & { label: string }) {
   return (
     <label className="block">
       <Label>{label}</Label>
@@ -164,3 +158,5 @@ export function Alert({
     </p>
   );
 }
+
+export { SubmitButton } from "./submit-button";

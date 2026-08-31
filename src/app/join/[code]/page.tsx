@@ -1,7 +1,8 @@
 import Link from "next/link";
 
+import { AuthShell } from "@/components/auth-shell";
 import { Brand } from "@/components/brand";
-import { Alert, Button } from "@/components/ui";
+import { Alert, buttonClass } from "@/components/ui";
 import { getCoupleState, getUser } from "@/lib/auth";
 import { INVITE_CODE_PATTERN } from "@/lib/invite-cookie";
 import { createClient } from "@/lib/supabase/server";
@@ -11,9 +12,9 @@ export const metadata = { title: "Invitación" };
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
+    <AuthShell>
       {children}
-    </main>
+    </AuthShell>
   );
 }
 
@@ -25,7 +26,7 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
       <Shell>
         <Brand subtitle="Invitación" />
         <Alert>Este enlace de invitación no es válido. Pide a tu pareja que te envíe uno nuevo.</Alert>
-        <Link href="/" className="text-center text-sm text-accent">
+        <Link href="/" className={buttonClass("secondary")}>
           Ir al inicio
         </Link>
       </Shell>
@@ -39,16 +40,16 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
   if (!user) {
     return (
       <Shell>
-        <Brand subtitle="Te han invitado a una wishlist de pareja ❤️" />
+        <Brand subtitle="Te han invitado a una wishlist de pareja" />
         <div className="rounded-md border border-border bg-surface p-5 text-sm text-muted">
           Crea tu cuenta o inicia sesión y te traemos de vuelta aquí para aceptar la invitación.
         </div>
         <div className="space-y-3">
-          <Link href="/register" className="block">
-            <Button>Crear cuenta</Button>
+          <Link href="/register" className={buttonClass()}>
+            Crear cuenta
           </Link>
-          <Link href="/login" className="block">
-            <Button variant="secondary">Ya tengo cuenta</Button>
+          <Link href="/login" className={buttonClass("secondary")}>
+            Ya tengo cuenta
           </Link>
         </div>
       </Shell>
@@ -74,8 +75,8 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
             ? "Esta es tu propia invitación. Compártela con tu pareja para que la abra desde su móvil."
             : "Ya formas parte de una pareja, así que no puedes aceptar esta invitación."}
         </Alert>
-        <Link href={state.isComplete ? "/wishlist" : "/setup"} className="block">
-          <Button variant="secondary">{state.isComplete ? "Ir al inicio" : "Volver"}</Button>
+        <Link href={state.isComplete ? "/wishlist" : "/setup"} className={buttonClass("secondary")}>
+          {state.isComplete ? "Ir al inicio" : "Volver"}
         </Link>
       </Shell>
     );
@@ -83,7 +84,7 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
 
   return (
     <Shell>
-      <Brand subtitle="Te han invitado a una wishlist de pareja ❤️" />
+      <Brand subtitle="Te han invitado a una wishlist de pareja" />
       <div className="rounded-md border border-border bg-surface p-5 text-sm text-muted">
         Al aceptar, tú y quien te ha invitado compartiréis vuestras listas de deseos.
       </div>
