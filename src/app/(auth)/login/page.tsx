@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { LoginForm } from "./login-form";
 
-export const metadata = { title: "Entrar · Wishlist" };
+export const metadata = { title: "Entrar" };
 
 export default function LoginPage() {
   return (

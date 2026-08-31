@@ -52,6 +52,24 @@ body {
   padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 
+/* Foco visible y coherente en toda la app, sin ensuciar el clic con raton. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 0.75rem;
+}
+
+/* Quien prefiera menos movimiento, no lo tiene. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Boton flotante que descansa justo encima de la barra. */
 .bottom-above-nav {
   bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);

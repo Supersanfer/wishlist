@@ -9,7 +9,7 @@ import { CreateCoupleCard } from "./create-couple-card";
 import { InviteCard } from "./invite-card";
 import { JoinByCodeForm } from "./join-by-code-form";
 
-export const metadata = { title: "Empareja · Wishlist" };
+export const metadata = { title: "Empareja" };
 
 export default async function SetupPage() {
   const user = await requireUser();

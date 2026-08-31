@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Brand } from "@/components/brand";
 import { RegisterForm } from "./register-form";
 
-export const metadata = { title: "Crear cuenta · Wishlist" };
+export const metadata = { title: "Crear cuenta" };
 
 export default function RegisterPage() {
   return (

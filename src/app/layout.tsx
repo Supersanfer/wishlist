@@ -10,7 +10,7 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Wishlist",
+  title: { default: "Wishlist", template: "%s · Wishlist" },
   description: "Wishlist privada para parejas",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, title: "Wishlist", statusBarStyle: "default" },

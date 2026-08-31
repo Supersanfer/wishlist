@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:db": "node supabase/tests/rls.test.mjs",
-    "verify:remote": "node --env-file=.env.local scripts/verify-remote-auth.mjs"
+    "verify:remote": "node --env-file=.env.local scripts/verify-remote-auth.mjs",
+    "test:e2e": "node --env-file=.env.local scripts/e2e-mvp.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

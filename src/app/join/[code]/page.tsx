@@ -7,7 +7,7 @@ import { INVITE_CODE_PATTERN } from "@/lib/invite-cookie";
 import { createClient } from "@/lib/supabase/server";
 import { AcceptInviteForm } from "./accept-invite-form";
 
-export const metadata = { title: "Invitación · Wishlist" };
+export const metadata = { title: "Invitación" };
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
