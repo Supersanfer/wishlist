@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdfbfb;
+  --foreground: #1c1917;
+  --card: #ffffff;
+  --border: #ece7e5;
+  --muted: #78716c;
+  --accent: #db2777;
+  --accent-foreground: #ffffff;
+  --danger: #b91c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #100e0f;
+    --foreground: #f5f3f2;
+    --card: #1a1718;
+    --border: #2d2829;
+    --muted: #a8a29e;
+    --accent: #f472b6;
+    --accent-foreground: #1c1917;
+    --danger: #fca5a5;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  /* Mobile-first: respetar notch y barra inferior en modo standalone. */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  overscroll-behavior-y: none;
+}
