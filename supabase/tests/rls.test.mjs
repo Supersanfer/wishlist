@@ -265,6 +265,44 @@ await expectDenied("Anguita no puede crear ocasiones a nombre de Bianca", anguit
     [bianca],
   ),
 );
+// CRUD completo de las ocasiones propias.
+await expectOk("Bianca edita su ocasion", bianca, () =>
+  db.query("update public.occasions set name = 'Cumple de Bianca' where id = $1", [occB]),
+);
+{
+  const r = await as(bianca, () =>
+    db.query("select name from public.occasions where id = $1", [occB]),
+  );
+  if (r.rows[0]?.name === "Cumple de Bianca") ok("la edicion de la ocasion persiste");
+  else fail("persistencia de la ocasion", JSON.stringify(r.rows));
+}
+await expectNoRowsAffected(
+  "Anguita no puede editar ocasiones de Bianca",
+  anguita,
+  "update public.occasions set name = 'Robada' where id = $1",
+  [occB],
+);
+{
+  const throwaway = (
+    await as(bianca, () =>
+      db.query(
+        `insert into public.occasions (owner_id, name, occasion_date)
+         values ($1, 'Temporal', '2027-01-01') returning id`,
+        [bianca],
+      ),
+    )
+  ).rows[0].id;
+  const r = await as(bianca, () =>
+    db.query("delete from public.occasions where id = $1", [throwaway]),
+  );
+  if (r.affectedRows === 1) ok("Bianca borra su propia ocasion");
+  else fail("borrado de ocasion propia", `afectadas ${r.affectedRows}`);
+}
+{
+  const r = await as(dana, () => db.query("select * from public.occasions"));
+  if (r.rows.length === 0) ok("otra pareja no ve las ocasiones ajenas");
+  else fail("aislamiento de ocasiones", JSON.stringify(r.rows));
+}
 
 console.log("\n== wishlist personal ==");
 const itemB = (
