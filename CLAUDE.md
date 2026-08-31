@@ -54,8 +54,20 @@ Tailwind v4 + Supabase (Postgres, Auth, RLS). PWA. Deploy en Vercel.
 
 ## UI
 
+Sistema de diseño "cuaderno compartido". Los tokens viven en `src/app/globals.css`
+y son la única fuente: nada de valores de color sueltos en los componentes.
+
 - Mobile-first estricto: diseñar a 375px y escalar hacia arriba con `sm:`/`md:`.
-- Targets táctiles ≥ 44px. Respetar `env(safe-area-inset-*)`.
+- Targets táctiles ≥ 44px, también en las acciones de texto (usar `TextButton`).
+- Radios con criterio: `rounded-sm` (6px) en miniaturas y chips, `rounded-md`
+  (10px) en tarjetas, inputs y botones, `rounded-lg` (16px) en superficies
+  sobrepuestas. Nada de `rounded-xl`/`2xl`.
+- El acento es para la acción primaria, la pestaña activa y las marcas de
+  reserva. Nunca como fondo grande ni repetido en cada fila.
+- El relieve lo dan el borde y el valor. Sombra sólo en lo que de verdad flota.
+- Iconos: `src/components/icons.tsx`, viewBox 24 y trazo 1.5. Sin emojis como
+  iconografía funcional ni librerías de iconos.
+- Títulos con `font-display` (Fraunces); el resto en Geist. Precios con `tabular`.
 - Sólo utilidades Tailwind. Sin CSS-in-JS ni ficheros `.module.css`.
 
 ## Verificación
