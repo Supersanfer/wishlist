@@ -12,7 +12,10 @@ export default function RegisterPage() {
       <RegisterForm />
       <p className="text-center text-sm text-muted">
         ¿Ya tienes cuenta?{" "}
-        <Link href="/login" className="font-medium text-accent">
+        <Link
+          href="/login"
+          className="inline-flex h-11 items-center px-1 font-medium text-accent underline underline-offset-4"
+        >
           Entrar
         </Link>
       </p>

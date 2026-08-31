@@ -12,9 +12,8 @@ export function RegisterForm() {
 
   if (state.awaitingConfirmation) {
     return (
-      <div className="space-y-4 rounded-2xl border border-border bg-card p-6 text-center">
-        <p className="text-3xl">📬</p>
-        <h2 className="text-lg font-semibold">Confirma tu correo</h2>
+      <div className="space-y-3 rounded-md border border-border bg-surface p-6 text-center">
+        <h2 className="font-display text-xl">Confirma tu correo</h2>
         <p className="text-sm text-muted">
           Te hemos enviado un enlace a <span className="text-foreground">{state.email}</span>.
           Ábrelo desde este mismo dispositivo para terminar de crear tu cuenta.

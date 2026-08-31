@@ -1,9 +1,8 @@
 export function Brand({ subtitle }: { subtitle: string }) {
   return (
     <header className="space-y-2">
-      <p className="text-3xl">❤️</p>
-      <h1 className="text-2xl font-semibold tracking-tight">Wishlist</h1>
-      <p className="text-sm text-muted">{subtitle}</p>
+      <h1 className="font-display text-[2.125rem] leading-10">Wishlist</h1>
+      <p className="text-muted">{subtitle}</p>
     </header>
   );
 }

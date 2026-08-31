@@ -35,7 +35,9 @@ export function SharedForm({
 
       {state.error ? <Alert>{state.error}</Alert> : null}
 
-      <SubmitButton pendingLabel={pendingLabel}>{submitLabel}</SubmitButton>
+      <SubmitButton size="lg" pendingLabel={pendingLabel}>
+        {submitLabel}
+      </SubmitButton>
     </form>
   );
 }

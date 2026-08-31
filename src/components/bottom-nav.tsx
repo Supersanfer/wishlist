@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+import { GiftIcon, PersonIcon, TagHeartIcon, TogetherIcon } from "@/components/icons";
+
 const DESTINATIONS = [
-  { href: "/wishlist", label: "Mi lista", icon: "🎁" },
-  { href: "/partner", label: "Su lista", icon: "💝" },
-  { href: "/shared", label: "Juntos", icon: "✨" },
-  { href: "/me", label: "Yo", icon: "🙂" },
+  { href: "/wishlist", label: "Mi lista", Icon: GiftIcon },
+  { href: "/partner", label: "Su lista", Icon: TagHeartIcon },
+  { href: "/shared", label: "Juntos", Icon: TogetherIcon },
+  { href: "/me", label: "Yo", Icon: PersonIcon },
 ] as const;
 
 export function BottomNav() {
@@ -16,26 +18,33 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Secciones"
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-border bg-card/90 pb-[env(safe-area-inset-bottom)] backdrop-blur"
+      // Sólida a propósito: el desenfoque de cristal es el tic visual que se
+      // pretende evitar, y aquí sólo restaría legibilidad al contenido.
+      className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)]"
     >
-      <ul className="mx-auto flex max-w-md">
-        {DESTINATIONS.map((destination) => {
-          const active =
-            pathname === destination.href || pathname.startsWith(`${destination.href}/`);
+      <ul className="mx-auto flex max-w-[26rem]">
+        {DESTINATIONS.map(({ href, label, Icon }) => {
+          const active = pathname === href || pathname.startsWith(`${href}/`);
 
           return (
-            <li key={destination.href} className="flex-1">
+            <li key={href} className="flex-1">
               <Link
-                href={destination.href}
+                href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex h-[var(--nav-height)] flex-col items-center justify-center gap-0.5 text-xs transition ${
+                className={`flex h-[var(--nav-height)] flex-col items-center justify-center gap-1 transition-colors duration-150 ${
                   active ? "text-accent" : "text-muted"
                 }`}
               >
-                <span aria-hidden className={`text-lg transition ${active ? "" : "opacity-70"}`}>
-                  {destination.icon}
+                <span
+                  className={`flex size-7 items-center justify-center rounded-sm transition-colors duration-150 ${
+                    active ? "bg-accent-soft" : ""
+                  }`}
+                >
+                  <Icon size={21} />
                 </span>
-                <span className={active ? "font-medium" : undefined}>{destination.label}</span>
+                <span className={`text-[0.6875rem] ${active ? "font-semibold" : "font-medium"}`}>
+                  {label}
+                </span>
               </Link>
             </li>
           );

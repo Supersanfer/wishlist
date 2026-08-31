@@ -32,6 +32,7 @@ export function OccasionForm({
         placeholder="Mi cumpleaños"
         maxLength={80}
         autoComplete="off"
+        enterKeyHint="next"
         required
         autoFocus={!occasion}
       />
@@ -41,12 +42,15 @@ export function OccasionForm({
         name="occasion_date"
         type="date"
         defaultValue={occasion?.occasion_date ?? ""}
+        hint="Se repite cada año."
         required
       />
 
       {state.error ? <Alert>{state.error}</Alert> : null}
 
-      <SubmitButton pendingLabel={pendingLabel}>{submitLabel}</SubmitButton>
+      <SubmitButton size="lg" pendingLabel={pendingLabel}>
+        {submitLabel}
+      </SubmitButton>
     </form>
   );
 }

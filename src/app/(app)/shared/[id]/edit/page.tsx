@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { updateSharedItem } from "@/app/actions/shared";
-import { AppPage, PageHeader } from "@/components/page-shell";
+import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { getSharedItem } from "@/lib/queries/shared";
 import { SharedForm } from "../../shared-form";
@@ -19,14 +18,7 @@ export default async function EditSharedPage({ params }: PageProps<"/shared/[id]
 
   return (
     <AppPage>
-      <PageHeader
-        title="Editar"
-        action={
-          <Link href="/shared" className="pt-1 text-sm text-muted">
-            Cancelar
-          </Link>
-        }
-      />
+      <FormHeader title="Editar" backTo="/shared" />
       <SharedForm
         action={updateSharedItem}
         item={item}

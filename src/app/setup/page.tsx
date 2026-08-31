@@ -30,7 +30,7 @@ export default async function SetupPage() {
     const code = invitation?.code ?? null;
 
     return (
-      <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-8 px-6 py-12">
+      <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
         <Brand subtitle="Ya casi. Solo falta que se una tu pareja." />
         <InviteCard code={code} link={code ? `${await siteOrigin()}/join/${code}` : null} />
         <SignOutButton />
@@ -39,7 +39,7 @@ export default async function SetupPage() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-8 px-6 py-12">
+    <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
       <Brand subtitle="Para empezar, crea vuestra pareja o únete con una invitación." />
       <CreateCoupleCard />
       <div className="flex items-center gap-3 text-xs text-muted">

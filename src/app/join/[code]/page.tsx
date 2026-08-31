@@ -11,7 +11,7 @@ export const metadata = { title: "Invitación" };
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-8 px-6 py-12">
+    <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
       {children}
     </main>
   );
@@ -40,7 +40,7 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
     return (
       <Shell>
         <Brand subtitle="Te han invitado a una wishlist de pareja ❤️" />
-        <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted">
+        <div className="rounded-md border border-border bg-surface p-5 text-sm text-muted">
           Crea tu cuenta o inicia sesión y te traemos de vuelta aquí para aceptar la invitación.
         </div>
         <div className="space-y-3">
@@ -84,7 +84,7 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
   return (
     <Shell>
       <Brand subtitle="Te han invitado a una wishlist de pareja ❤️" />
-      <div className="rounded-2xl border border-border bg-card p-5 text-sm text-muted">
+      <div className="rounded-md border border-border bg-surface p-5 text-sm text-muted">
         Al aceptar, tú y quien te ha invitado compartiréis vuestras listas de deseos.
       </div>
       <AcceptInviteForm code={code} />

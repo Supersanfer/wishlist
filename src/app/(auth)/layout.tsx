@@ -8,7 +8,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/">) {
   if (user) redirect(destinationFor(await getCoupleState(user.id)));
 
   return (
-    <main className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center gap-8 px-6 py-12">
+    <main className="px-gutter mx-auto flex w-full max-w-[23rem] flex-1 flex-col justify-center gap-8 py-12">
       {children}
     </main>
   );

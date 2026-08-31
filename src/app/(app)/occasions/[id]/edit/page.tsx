@@ -1,8 +1,7 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { updateOccasion } from "@/app/actions/occasions";
-import { AppPage, PageHeader } from "@/components/page-shell";
+import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { getOwnOccasion } from "@/lib/queries/occasions";
 import { OccasionForm } from "../../occasion-form";
@@ -19,14 +18,7 @@ export default async function EditOccasionPage({ params }: PageProps<"/occasions
 
   return (
     <AppPage>
-      <PageHeader
-        title="Editar ocasión"
-        action={
-          <Link href="/occasions" className="pt-1 text-sm text-muted">
-            Cancelar
-          </Link>
-        }
-      />
+      <FormHeader title="Editar ocasión" backTo="/occasions" />
       <OccasionForm
         action={updateOccasion}
         occasion={occasion}

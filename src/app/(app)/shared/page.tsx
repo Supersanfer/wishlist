@@ -1,18 +1,21 @@
 import Link from "next/link";
 
+import { AddButton } from "@/components/add-button";
+import { Flash } from "@/components/flash";
+import { TogetherIcon } from "@/components/icons";
 import { AppPage, EmptyState, PageHeader } from "@/components/page-shell";
-import { Alert } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
 import { listSharedItems } from "@/lib/queries/shared";
 
-export const metadata = { title: "Wishlist conjunta" };
+export const metadata = { title: "Juntos" };
 
 const FLASH = {
-  creado: "Añadido a vuestra lista ✨",
+  creado: "Añadido a vuestra lista",
   guardado: "Cambios guardados",
-  eliminado: "Elemento eliminado",
+  eliminado: "Eliminado de vuestra lista",
 };
 
 export default async function SharedPage({ searchParams }: PageProps<"/shared">) {
@@ -22,36 +25,34 @@ export default async function SharedPage({ searchParams }: PageProps<"/shared">)
 
   return (
     <AppPage>
-      <PageHeader title="Wishlist conjunta" subtitle="Lo que queréis hacer o tener los dos." />
+      <PageHeader title="Juntos" subtitle="Lo que queréis hacer o tener los dos." />
 
-      {flash ? <Alert tone="info">{flash}</Alert> : null}
+      {flash ? <Flash message={flash} /> : null}
 
       {items.length === 0 ? (
         <EmptyState
-          icon="✨"
-          message="Aún no tenéis nada en vuestra lista conjunta ✨"
+          icon={<TogetherIcon size={22} />}
+          title="Vuestra lista compartida"
+          message="Un viaje, una cena, algo para casa. Aquí cualquiera de los dos añade y edita."
           action={
-            <Link
-              href="/shared/new"
-              className="flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground"
-            >
-              Añadir el primero
+            <Link href="/shared/new">
+              <Button>Añadir el primero</Button>
             </Link>
           }
         />
       ) : (
         <>
-          <ul className="space-y-3">
-            {items.map((item) => (
-              <WishCard key={item.id} wish={item} editHref={`/shared/${item.id}/edit`} />
+          <ul className="space-y-2.5 pb-nav">
+            {items.map((item, index) => (
+              <WishCard
+                key={item.id}
+                wish={item}
+                index={index}
+                editHref={`/shared/${item.id}/edit`}
+              />
             ))}
           </ul>
-          <Link
-            href="/shared/new"
-            className="bottom-above-nav sticky flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground shadow-lg"
-          >
-            + Añadir algo juntos
-          </Link>
+          <AddButton href="/shared/new" label="Añadir algo" />
         </>
       )}
     </AppPage>

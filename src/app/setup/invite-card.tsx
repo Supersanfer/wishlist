@@ -45,7 +45,7 @@ export function InviteCard({ code, link }: { code: string | null; link: string |
 
   return (
     <div className="space-y-4">
-      <div className="space-y-4 rounded-2xl border border-border bg-card p-5">
+      <div className="space-y-4 rounded-md border border-border bg-surface p-5">
         <div>
           <h2 className="text-lg font-semibold">Invita a tu pareja</h2>
           <p className="mt-1 text-sm text-muted">
@@ -53,7 +53,7 @@ export function InviteCard({ code, link }: { code: string | null; link: string |
           </p>
         </div>
 
-        <p className="rounded-xl bg-background px-3 py-2.5 font-mono text-xs break-all text-muted select-all">
+        <p className="rounded-sm bg-surface-sunken px-3 py-2.5 font-mono text-xs break-all text-muted select-all">
           {link}
         </p>
 

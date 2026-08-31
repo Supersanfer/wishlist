@@ -3,18 +3,15 @@
 import { AppPage, EmptyState } from "@/components/page-shell";
 import { Button } from "@/components/ui";
 
-/** Ultima red de la app: nunca se muestra el error tecnico a la persona. */
+/** Última red: nunca se enseña el error técnico, sólo la salida. */
 export default function AppError({ reset }: { error: Error; reset: () => void }) {
   return (
     <AppPage>
       <EmptyState
-        icon="😕"
-        message="No hemos podido cargar esta pantalla. Vuelve a intentarlo."
-        action={
-          <div className="w-48">
-            <Button onClick={reset}>Reintentar</Button>
-          </div>
-        }
+        icon={<span className="text-lg">·</span>}
+        title="No hemos podido cargar esto"
+        message="Puede ser la conexión. Vuelve a intentarlo en un momento."
+        action={<Button onClick={reset}>Reintentar</Button>}
       />
     </AppPage>
   );

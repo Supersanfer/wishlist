@@ -1,16 +1,18 @@
-import Link from "next/link";
-
+import { AddButton } from "@/components/add-button";
+import { Flash } from "@/components/flash";
+import { GiftIcon } from "@/components/icons";
 import { AppPage, EmptyState, PageHeader } from "@/components/page-shell";
-import { Alert } from "@/components/ui";
+import { Button } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
 import { listWishesOf } from "@/lib/queries/wishlist";
+import Link from "next/link";
 
-export const metadata = { title: "Mi wishlist" };
+export const metadata = { title: "Mi lista" };
 
 const FLASH = {
-  creado: "Deseo añadido ✨",
+  creado: "Deseo añadido a tu lista",
   guardado: "Cambios guardados",
   eliminado: "Deseo eliminado",
 };
@@ -22,36 +24,41 @@ export default async function WishlistPage({ searchParams }: PageProps<"/wishlis
 
   return (
     <AppPage>
-      <PageHeader title="Mi wishlist" subtitle="Lo que te haría ilusión recibir." />
+      <PageHeader
+        title="Mi lista"
+        subtitle={
+          wishes.length === 0
+            ? undefined
+            : `${wishes.length} ${wishes.length === 1 ? "deseo" : "deseos"} · tu pareja los ve`
+        }
+      />
 
-      {flash ? <Alert tone="info">{flash}</Alert> : null}
+      {flash ? <Flash message={flash} /> : null}
 
       {wishes.length === 0 ? (
         <EmptyState
-          icon="🎁"
-          message="Todavía no tienes deseos 🎁"
+          icon={<GiftIcon size={22} />}
+          title="Tu lista está en blanco"
+          message="Apunta algo que te haga ilusión. Tu pareja lo verá y podrá regalártelo."
           action={
-            <Link
-              href="/wishlist/new"
-              className="flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground"
-            >
-              Añadir el primero
+            <Link href="/wishlist/new">
+              <Button>Añadir el primero</Button>
             </Link>
           }
         />
       ) : (
         <>
-          <ul className="space-y-3">
-            {wishes.map((wish) => (
-              <WishCard key={wish.id} wish={wish} editHref={`/wishlist/${wish.id}/edit`} />
+          <ul className="space-y-2.5 pb-nav">
+            {wishes.map((wish, index) => (
+              <WishCard
+                key={wish.id}
+                wish={wish}
+                index={index}
+                editHref={`/wishlist/${wish.id}/edit`}
+              />
             ))}
           </ul>
-          <Link
-            href="/wishlist/new"
-            className="bottom-above-nav sticky flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground shadow-lg"
-          >
-            + Añadir deseo
-          </Link>
+          <AddButton href="/wishlist/new" label="Añadir deseo" />
         </>
       )}
     </AppPage>

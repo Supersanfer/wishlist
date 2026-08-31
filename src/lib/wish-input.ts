@@ -35,6 +35,32 @@ function field(formData: FormData, name: string): string {
   return String(formData.get(name) ?? "").trim();
 }
 
+/**
+ * Acepta el precio tal y como se escribe en español: "199,00", "1.299,50",
+ * "199 €" o "199.5". Se queda con el ultimo separador como decimal.
+ */
+function parsePrice(raw: string): { cents: number | null } | { error: string } {
+  const cleaned = raw.replace(/[^\d.,-]/g, "");
+  if (!cleaned) return { cents: null };
+
+  const lastComma = cleaned.lastIndexOf(",");
+  const lastDot = cleaned.lastIndexOf(".");
+  const decimalAt = Math.max(lastComma, lastDot);
+
+  const normalised =
+    decimalAt === -1
+      ? cleaned.replace(/[.,]/g, "")
+      : `${cleaned.slice(0, decimalAt).replace(/[.,]/g, "")}.${cleaned.slice(decimalAt + 1)}`;
+
+  const value = Number(normalised);
+  if (!Number.isFinite(value)) return { error: "Ese precio no es un número." };
+  if (value < 0) return { error: "El precio no puede ser negativo." };
+
+  const cents = Math.round(value * 100);
+  if (cents > 2_000_000_000) return { error: "Ese precio es demasiado alto." };
+  return { cents };
+}
+
 /** Normaliza una URL http/https, o devuelve el motivo por el que no vale. */
 function parseUrl(raw: string): { url: string | null } | { error: string } {
   if (!raw) return { url: null };
@@ -74,15 +100,8 @@ export function parseItemForm(formData: FormData): { fields: ItemFields } | { er
     return { error: "Esa URL de imagen no es válida. Debe empezar por http:// o https://" };
   }
 
-  const rawPrice = field(formData, "price").replace(",", ".");
-  let priceCents: number | null = null;
-  if (rawPrice) {
-    const value = Number(rawPrice);
-    if (!Number.isFinite(value)) return { error: "Ese precio no es un número." };
-    if (value < 0) return { error: "El precio no puede ser negativo." };
-    priceCents = Math.round(value * 100);
-    if (priceCents > 2_000_000_000) return { error: "Ese precio es demasiado alto." };
-  }
+  const price = parsePrice(field(formData, "price"));
+  if ("error" in price) return { error: price.error };
 
   const currency = field(formData, "currency").toUpperCase() || "EUR";
   if (!/^[A-Z]{3}$/.test(currency)) return { error: "Esa moneda no es válida." };
@@ -93,7 +112,7 @@ export function parseItemForm(formData: FormData): { fields: ItemFields } | { er
       description: description || null,
       url: url.url,
       image_url: imageUrl.url,
-      price_cents: priceCents,
+      price_cents: price.cents,
       currency,
     },
   };

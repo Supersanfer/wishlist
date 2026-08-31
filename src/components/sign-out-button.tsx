@@ -1,11 +1,12 @@
 import { signOut } from "@/app/actions/auth";
+import { SubmitButton } from "@/components/ui";
 
 export function SignOutButton() {
   return (
-    <form action={signOut} className="text-center">
-      <button type="submit" className="text-sm text-muted underline underline-offset-4">
+    <form action={signOut}>
+      <SubmitButton variant="ghost" pendingLabel="Saliendo…">
         Cerrar sesión
-      </button>
+      </SubmitButton>
     </form>
   );
 }

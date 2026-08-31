@@ -2,14 +2,14 @@
 
 import { useActionState, useState } from "react";
 
-import { Alert, SubmitButton } from "@/components/ui";
+import { Alert, Button, SubmitButton, TextButton } from "@/components/ui";
 import { initialActionState, type ActionState } from "@/lib/form-state";
 
 type Action = (state: ActionState, formData: FormData) => Promise<ActionState>;
 
 /**
- * Borrado con confirmacion en dos pasos, en linea. Evita el `confirm()` nativo,
- * que en una PWA se ve como un dialogo del navegador.
+ * Borrado con confirmación en dos pasos, en línea. Nada de `confirm()` nativo:
+ * en una PWA delata que hay un navegador debajo.
  */
 export function DeleteItem({
   id,
@@ -31,32 +31,26 @@ export function DeleteItem({
 
   if (!asking) {
     return (
-      <div className="space-y-4 border-t border-border pt-6">
+      <div className="space-y-3 border-t border-border pt-5">
         {state.error ? <Alert>{state.error}</Alert> : null}
-        <button
-          type="button"
-          onClick={() => setAsking(true)}
-          className="w-full text-center text-sm text-danger underline underline-offset-4"
-        >
+        <TextButton tone="danger" className="w-full" onClick={() => setAsking(true)}>
           {label}
-        </button>
+        </TextButton>
       </div>
     );
   }
 
   return (
-    <form action={formAction} className="space-y-3 border-t border-border pt-6">
+    <form action={formAction} className="space-y-3 border-t border-border pt-5">
       <input type="hidden" name="id" value={id} />
-      <p className="text-center text-sm">{question}</p>
+      <p className="text-center text-sm text-muted">{question}</p>
       {state.error ? <Alert>{state.error}</Alert> : null}
-      <SubmitButton pendingLabel={pendingLabel}>{confirmLabel}</SubmitButton>
-      <button
-        type="button"
-        onClick={() => setAsking(false)}
-        className="w-full text-center text-sm text-muted underline underline-offset-4"
-      >
+      <SubmitButton variant="danger" pendingLabel={pendingLabel}>
+        {confirmLabel}
+      </SubmitButton>
+      <Button type="button" variant="ghost" onClick={() => setAsking(false)}>
         No, volver
-      </button>
+      </Button>
     </form>
   );
 }

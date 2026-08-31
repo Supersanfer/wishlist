@@ -1,7 +1,6 @@
-import Link from "next/link";
 
 import { createWish } from "@/app/actions/wishlist";
-import { AppPage, PageHeader } from "@/components/page-shell";
+import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { listOccasionsOf } from "@/lib/queries/occasions";
 import { WishForm } from "../wish-form";
@@ -14,14 +13,7 @@ export default async function NewWishPage() {
 
   return (
     <AppPage>
-      <PageHeader
-        title="Nuevo deseo"
-        action={
-          <Link href="/wishlist" className="pt-1 text-sm text-muted">
-            Cancelar
-          </Link>
-        }
-      />
+      <FormHeader title="Nuevo deseo" backTo="/wishlist" />
 
       <WishForm
         action={createWish}
