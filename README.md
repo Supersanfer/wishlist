@@ -1,152 +1,290 @@
+<div align="center">
+
 # Wishlist
 
-**Una lista privada para dos.** Apunta lo que te hace ilusión, mira lo que le
-hace ilusión a tu pareja y reserva su regalo sin que se entere.
+**Stop guessing what to give each other.**
 
-<p>
-  <img src="docs/screenshots/wishlist.png" alt="Lista personal" width="30%">
-  <img src="docs/screenshots/partner.png" alt="Lista de la pareja con un regalo reservado" width="30%">
-  <img src="docs/screenshots/occasions.png" alt="Ocasiones" width="30%">
-</p>
+A private, two-person wishlist. Save what you'd love to receive, browse your
+partner's list, and reserve their gift — without them ever finding out.
 
-## El problema
+[![CI](https://img.shields.io/github/actions/workflow/status/Supersanfer/wishlist/ci.yml?branch=main&style=flat-square&label=CI)](https://github.com/Supersanfer/wishlist/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Supersanfer/wishlist?style=flat-square)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://typescriptlang.org)
+[![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 
-Regalar bien es difícil por dos motivos opuestos. Si no preguntas, aciertas poco.
-Si preguntas, pierdes la sorpresa.
+[Live app](https://wishlist-seven-zeta.vercel.app) ·
+[Run locally](#run-locally) ·
+[How the secret works](#security)
 
-Wishlist resuelve las dos mitades a la vez: cada persona mantiene su lista y ve la
-de la otra, y cuando eliges qué regalar lo reservas **sin que quien lo recibe pueda
-descubrirlo**. Su lista sigue exactamente igual que antes.
+<img src="docs/screenshots/landing.png" alt="Wishlist landing page" width="300">
 
-Está pensada para dos personas concretas, no para escalar. No tiene amigos, ni
-feed, ni recomendaciones, ni notificaciones.
+</div>
 
-## Funcionalidades
+> [!NOTE]
+> The interface is in Spanish. The code, comments and docs are too, except this
+> README.
 
-- **Lista personal** — nombre, precio, enlace, prioridad, ocasión e imagen.
-- **Lista de la pareja** — en solo lectura; es donde eliges el regalo.
-- **Reservas privadas** — reservar, cancelar y marcar como comprado, en secreto.
-- **Lista conjunta** — viajes, planes y cosas para casa, sin propietario.
-- **Ocasiones** — cumpleaños y aniversarios, con cuenta atrás, compartidas con la
-  pareja como contexto.
-- **PWA** — instalable, con salida offline propia.
+---
 
-## Lo interesante: el secreto es del esquema, no de la interfaz
+## What is Wishlist?
 
-Esconder algo en React es trivial y no vale nada: basta abrir la pestaña de red.
-Aquí el dueño de un deseo **no puede** ver sus reservas porque la base de datos no
-se las devuelve, y eso se apoya en cuatro decisiones que se sostienen entre sí:
+Giving good gifts is hard for two opposite reasons. If you don't ask, you miss.
+If you ask, you lose the surprise.
 
-1. `gift_reservations` tiene una única política de lectura, `reserver_id = auth.uid()`.
-   El dueño obtiene cero filas en `select`, en `count(*)`, en `exists` y en
-   cualquier `join` desde su propia lista.
-2. **Nada se denormaliza sobre el deseo.** No hay `is_reserved`, y reservar no toca
-   su `updated_at`: el deseo es idéntico byte a byte antes y después.
-3. La clave foránea es `on delete cascade`. Con `restrict`, borrar un deseo
-   reservado fallaría — y ese fallo, por sí solo, delataría la reserva.
-4. El dueño **no puede sondear el índice único**: la política de inserción le
-   impide reservar sus propios deseos, así que nunca ve la violación de unicidad
-   que revelaría una reserva existente.
+Wishlist solves both halves at once. Each person keeps their own list and can see
+the other's. When you pick something to give, you reserve it — and **the person
+receiving it cannot find out**. Their list looks exactly the same as before.
 
-No hay vistas en `public`: una vista sin `security_invoker` se ejecutaría con los
-permisos de su propietario y se saltaría todo lo anterior.
+It's built for two specific people, not to scale. No friends, no feed, no
+recommendations, no notifications.
 
-Las cuatro tienen su test. `npm run test:db` levanta un Postgres real y comprueba,
-entre otras cosas, que el error que recibe el dueño al intentar cada vía es de
-permisos y **no** un `duplicate key`.
+## Features
 
-## Stack
+| | |
+| --- | --- |
+| 🎁 **Personal wishlist** | Name, price, link, priority, occasion and image |
+| 💝 **Partner's wishlist** | Read-only — this is where you pick the gift |
+| 🔒 **Private reservations** | Reserve, cancel and mark as bought, all in secret |
+| ✨ **Shared list** | Trips, plans and things for the house. No owner |
+| 🎂 **Occasions** | Birthdays and anniversaries with a countdown, shared as context |
+| 📱 **Installable PWA** | Mobile-first, with its own offline screen |
 
-Next.js 16 (App Router, Server Components y Server Actions) · React 19 ·
-TypeScript · Tailwind CSS v4 · Supabase (PostgreSQL, Auth y RLS) · Vercel.
+## How it works
 
-Sin librería de componentes, de iconos, de animación ni de PWA. La iconografía
-son trece SVG propios y el service worker son ochenta líneas. Las únicas
-dependencias de producción son `next`, `react` y `@supabase/*`.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-## Arquitectura
+**1 · Create your account**
 
-```
-src/
-├── app/
-│   ├── (marketing)/     portada pública y privacidad
-│   ├── (auth)/          login y registro
-│   ├── (app)/           pantallas con sesión y pareja, con navegación inferior
-│   └── actions/         Server Actions: la única vía de escritura
-├── components/          kit de UI y sistema de diseño
-├── lib/
-│   ├── queries/         acceso a datos, centralizado
-│   └── supabase/        clientes de navegador y de servidor
-└── proxy.ts             refresco de sesión y protección de rutas
-supabase/
-├── migrations/          esquema y políticas RLS
-└── tests/               banco de pruebas de permisos
-```
+Email and password. Nothing else.
 
-La autorización vive en Postgres, no en React. El filtrado en cliente es
-presentación; lo que decide quién ve qué son las políticas. La `service_role` no
-existe en este repositorio: la aplicación entera funciona con la clave pública.
+**2 · Pair with your partner**
 
-Detalle del modelo: [`supabase/README.md`](supabase/README.md).
+One of you creates the couple and shares a single-use link. A couple is exactly
+two people, enforced by a database constraint.
 
-## Desarrollo
+</td>
+<td width="50%" valign="top">
+
+**3 · Add what you'd love**
+
+A name is enough. Price, link and occasion are optional.
+
+**4 · Reserve their gift**
+
+Open their list, tap Reserve, and later mark it as bought. They never see a
+thing.
+
+</td>
+</tr>
+</table>
+
+## Screenshots
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+**Your list**
+
+What you'd love to receive.
+
+<img src="docs/screenshots/wishlist.png" width="100%" alt="Personal wishlist">
+
+</td>
+<td width="50%" valign="top">
+
+**Their list**
+
+With one gift already reserved by you.
+
+<img src="docs/screenshots/partner.png" width="100%" alt="Partner's wishlist with a reserved gift">
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+**Occasions**
+
+Sorted by what's coming up next.
+
+<img src="docs/screenshots/occasions.png" width="100%" alt="Occasions">
+
+</td>
+<td width="50%" valign="top">
+
+**Adding a wish**
+
+The essentials up front, the rest folded away.
+
+<img src="docs/screenshots/new-wish.png" width="100%" alt="New wish form">
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary>Shared list and profile</summary>
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+<img src="docs/screenshots/shared.png" width="100%" alt="Shared wishlist">
+
+</td>
+<td width="50%" valign="top">
+
+<img src="docs/screenshots/profile.png" width="100%" alt="Profile">
+
+</td>
+</tr>
+</table>
+
+</details>
+
+## Tech stack
+
+| Layer | What |
+| --- | --- |
+| Framework | Next.js 16 — App Router, Server Components, Server Actions |
+| Language | TypeScript, React 19 |
+| Styling | Tailwind CSS v4, with a design system in CSS custom properties |
+| Backend | Supabase — PostgreSQL, Auth and Row Level Security |
+| Hosting | Vercel |
+
+Five production dependencies: `next`, `react`, `react-dom`, `@supabase/ssr` and
+`@supabase/supabase-js`. No component library, no icon library, no animation
+library, no PWA plugin — the icons are 13 hand-written SVGs and the service
+worker is 80 lines.
+
+## Security
+
+Authorization lives in PostgreSQL, not in React. Client-side filtering is
+presentation; what decides who sees what are Row Level Security policies,
+checked on every single query.
+
+- You can only create, edit and delete **your own** wishes.
+- Your partner can **read** your list, and nothing else.
+- Both of you can manage the shared list.
+- **Gift reservations are visible only to the person who made them.** The owner
+  of a wish cannot discover that it's reserved — not through a query, not
+  through a count, not through an error message. It isn't hidden by the UI: the
+  database doesn't return those rows.
+- The `service_role` key does not exist in this repository. The whole app runs
+  on the public anon key.
+
+8 tables, all with RLS enabled in the same migration that creates them, and 23
+policies. `npm run test:db` boots a real PostgreSQL and runs **79 permission
+checks** with four users across two different couples — including that the owner
+of a wish hits a permissions error, and never a unique-constraint error that
+would give the reservation away.
+
+The reasoning behind the schema is in [`supabase/README.md`](supabase/README.md).
+
+## Run locally
+
+You'll need Node 20.9+ and a free [Supabase](https://supabase.com) project.
 
 ```bash
 git clone https://github.com/Supersanfer/wishlist.git
 cd wishlist
 npm install
-cp .env.example .env.local   # rellenar con los datos del proyecto Supabase
+cp .env.example .env.local   # fill in your Supabase values
 npm run dev
 ```
 
-Hacen falta dos variables, ambas públicas, de Supabase → Project Settings → API:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-```
-
-El arranque falla a propósito si falta alguna, en lugar de romper en la primera
-petición.
-
-Aplicar el esquema a un proyecto Supabase nuevo:
+Then apply the schema to your Supabase project:
 
 ```bash
-npx supabase link --project-ref <ref>
+npx supabase link --project-ref <your-project-ref>
 npx supabase db push
 ```
 
-## Tests
+In Supabase, go to **Authentication → Sign In / Providers → Email** and turn
+**Confirm email** off for local development, or sign-ups will wait for an email
+that the built-in SMTP rate-limits aggressively.
 
-| Comando | Qué hace |
+### Environment variables
+
+Both are public and safe in the browser — security comes from RLS, not from
+hiding the key. Source of truth: [`.env.example`](.env.example).
+
+| Variable | Required | What it is |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | Yes | Supabase → Project Settings → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Yes | Same page. The publishable key |
+| `NEXT_PUBLIC_SITE_URL` | No | Canonical URL for share metadata |
+
+Startup fails on purpose if a required one is missing, instead of breaking on
+the first request.
+
+### Scripts
+
+| Command | What it does |
 | --- | --- |
-| `npm run test:db` | 79 comprobaciones de permisos sobre Postgres real |
-| `npm run test:e2e` | 27 comprobaciones recorriendo la app en un navegador real |
-| `npm run lint` · `npm run typecheck` · `npm run build` | Lo de siempre |
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `next typegen` + `tsc --noEmit` |
+| `npm run test:db` | 79 RLS checks against real PostgreSQL |
+| `npm run test:e2e` | Full walkthrough in a real browser |
 
-`test:db` levanta **Postgres 17 en WebAssembly** (PGlite), simula el entorno de
-Supabase —esquema `auth`, `auth.uid()`, roles `anon` y `authenticated` con sus
-grants por defecto—, aplica las migraciones y prueba los permisos con cuatro
-usuarios repartidos en dos parejas. No necesita Docker, ni red, ni un proyecto
-Supabase: corre en unos segundos y en CI.
+`test:db` boots **PostgreSQL 18 compiled to WebAssembly** (PGlite), fakes the
+Supabase environment — `auth` schema, `auth.uid()`, the `anon` and
+`authenticated` roles with their default grants — applies the migrations and
+tests permissions. No Docker, no network, no Supabase project: it runs in
+seconds, including in CI.
 
-`test:e2e` pilota un navegador real por CDP, sin dependencias, y recorre el
-producto de punta a punta: registro, emparejamiento, alta de deseos, reserva y la
-comprobación de que quien recibe no ve nada. Crea usuarios reales, así que se
-lanza a propósito.
+`test:e2e` drives a real browser over the Chrome DevTools Protocol with no
+dependencies, and walks the whole product end to end, including the check that
+the receiver sees nothing. It creates real users, so you run it deliberately.
 
-## Deploy
+## Deployment
 
-Vercel detecta Next.js sin configuración. Antes del primer despliegue hay que dar
-de alta las dos variables de entorno, y en Supabase apuntar Site URL y Redirect
-URLs (`https://<dominio>/**`) al dominio desplegado, o el enlace de confirmación
-de correo no vuelve a la aplicación.
+Vercel detects Next.js with no configuration. Two things to get right:
+
+1. Add both environment variables **before** the first deploy — the build fails
+   without them, by design.
+2. In Supabase → **Authentication → URL Configuration**, set Site URL to your
+   domain and add `https://<your-domain>/**` to Redirect URLs, or the email
+   confirmation link won't come back to the app.
+
+## Project structure
+
+```
+src/
+├── app/
+│   ├── (marketing)/    public landing and privacy notice
+│   ├── (auth)/         sign in and sign up
+│   ├── (app)/          signed-in screens, with the bottom navigation
+│   └── actions/        Server Actions — the only write path
+├── components/         UI kit and design system
+├── lib/
+│   ├── queries/        data access, in one place
+│   └── supabase/       browser and server clients
+└── proxy.ts            session refresh and route protection
+
+supabase/
+├── migrations/         schema and RLS policies
+└── tests/              permission test suite
+```
 
 ## Roadmap
 
-- Subida de imágenes desde el móvil con Supabase Storage, en lugar de pegar una URL.
-- Recuperación de contraseña (requiere SMTP propio).
+- [ ] Image uploads from the phone, instead of pasting a URL
+- [ ] Password recovery (needs a custom SMTP provider)
+- [ ] A little more polish on the installed PWA
 
-## Licencia
+## Contributing
 
-[MIT](LICENSE).
+Issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) —
+it's short.
+
+## License
+
+[MIT](LICENSE)

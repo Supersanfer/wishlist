@@ -5,6 +5,15 @@ on:
     branches: [main]
   pull_request:
 
+# Solo necesita leer el codigo.
+permissions:
+  contents: read
+
+# Un push nuevo cancela la ejecucion anterior de la misma rama.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
     runs-on: ubuntu-latest

@@ -57,9 +57,9 @@ los permisos de su propietario y se saltaría estas políticas.
 npm run test:db
 ```
 
-Levanta un Postgres 17 real en WASM (PGlite, sin Docker), simula el entorno de
+Levanta un Postgres 18 real en WASM (PGlite, sin Docker), simula el entorno de
 Supabase (esquema `auth`, `auth.uid()`, roles `anon`/`authenticated` y sus grants
-por defecto), aplica todas las migraciones en orden y ejecuta 58 comprobaciones
+por defecto), aplica todas las migraciones en orden y ejecuta 79 comprobaciones
 de permisos con cuatro usuarios en dos parejas distintas.
 
 Ejecutarlo tras **cualquier** cambio en `migrations/`, y añadir casos al añadir

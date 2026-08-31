@@ -2,6 +2,30 @@
   "name": "wishlist",
   "version": "0.1.0",
   "private": true,
+  "description": "Una lista privada para dos: apunta lo que te hace ilusión y reserva su regalo sin que se entere.",
+  "license": "MIT",
+  "author": "Álvaro (@Supersanfer)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Supersanfer/wishlist.git"
+  },
+  "homepage": "https://wishlist-seven-zeta.vercel.app",
+  "bugs": {
+    "url": "https://github.com/Supersanfer/wishlist/issues"
+  },
+  "keywords": [
+    "wishlist",
+    "couples",
+    "gifts",
+    "nextjs",
+    "supabase",
+    "postgresql",
+    "row-level-security",
+    "pwa"
+  ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",

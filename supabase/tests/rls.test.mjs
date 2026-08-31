@@ -1,4 +1,4 @@
-// Banco de pruebas de RLS contra Postgres real (PGlite / PG17).
+// Banco de pruebas de RLS contra Postgres real (PGlite / PG18).
 // Reproduce el entorno de Supabase: esquema auth, auth.uid(), roles anon y
 // authenticated, y los mismos GRANT por defecto.
 import { PGlite } from "@electric-sql/pglite";

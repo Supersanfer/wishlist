@@ -34,6 +34,13 @@ yarn-error.log*
 .env*
 !.env.example
 
+# editores
+/.idea
+/.vscode
+
+# ajustes locales de Claude Code
+.claude/settings.local.json
+
 # vercel
 .vercel
 
