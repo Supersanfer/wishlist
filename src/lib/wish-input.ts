@@ -18,6 +18,7 @@ export type WishFields = {
   title: string;
   description: string | null;
   url: string | null;
+  image_url: string | null;
   price_cents: number | null;
   currency: string;
   priority: WishPriority;
@@ -28,6 +29,21 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function field(formData: FormData, name: string): string {
   return String(formData.get(name) ?? "").trim();
+}
+
+/** Normaliza una URL http/https, o devuelve el motivo por el que no vale. */
+function parseUrl(raw: string): { url: string | null } | { error: string } {
+  if (!raw) return { url: null };
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
+  }
+  return { url: parsed.toString() };
 }
 
 /**
@@ -49,19 +65,12 @@ export function parseWishForm(formData: FormData): { fields: WishFields } | { er
     return { error: "La descripción es demasiado larga (máximo 2000)." };
   }
 
-  const rawUrl = field(formData, "url");
-  let url: string | null = null;
-  if (rawUrl) {
-    let parsed: URL;
-    try {
-      parsed = new URL(rawUrl);
-    } catch {
-      return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
-    }
-    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
-      return { error: "Ese enlace no es válido. Debe empezar por http:// o https://" };
-    }
-    url = parsed.toString();
+  const url = parseUrl(field(formData, "url"));
+  if ("error" in url) return { error: url.error };
+
+  const imageUrl = parseUrl(field(formData, "image_url"));
+  if ("error" in imageUrl) {
+    return { error: "Esa URL de imagen no es válida. Debe empezar por http:// o https://" };
   }
 
   const rawPrice = field(formData, "price").replace(",", ".");
@@ -87,7 +96,8 @@ export function parseWishForm(formData: FormData): { fields: WishFields } | { er
     fields: {
       title,
       description: rawDescription || null,
-      url,
+      url: url.url,
+      image_url: imageUrl.url,
       price_cents: priceCents,
       currency,
       priority,

@@ -4,7 +4,8 @@ import { useActionState } from "react";
 
 import { Alert, Field, Select, SubmitButton, Textarea } from "@/components/ui";
 import { initialActionState, type ActionState } from "@/lib/form-state";
-import type { Occasion, WishlistItem } from "@/lib/queries/wishlist";
+import type { Occasion } from "@/lib/queries/occasions";
+import type { WishlistItem } from "@/lib/queries/wishlist";
 import { CURRENCIES, PRIORITIES, PRIORITY_LABEL } from "@/lib/wish-input";
 
 type Action = (state: ActionState, formData: FormData) => Promise<ActionState>;
@@ -77,6 +78,16 @@ export function WishForm({
         type="url"
         inputMode="url"
         defaultValue={wish?.url ?? ""}
+        placeholder="https://…"
+        autoComplete="off"
+      />
+
+      <Field
+        label="URL de imagen (opcional)"
+        name="image_url"
+        type="url"
+        inputMode="url"
+        defaultValue={wish?.image_url ?? ""}
         placeholder="https://…"
         autoComplete="off"
       />

@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 
 import { updateWish } from "@/app/actions/wishlist";
 import { requirePairedUser } from "@/lib/auth";
-import { getOwnWish, listOwnOccasions } from "@/lib/queries/wishlist";
+import { listOccasionsOf } from "@/lib/queries/occasions";
+import { getOwnWish } from "@/lib/queries/wishlist";
 import { WishForm } from "../../wish-form";
 import { DeleteWish } from "./delete-wish";
 
@@ -15,7 +16,7 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
 
   const [wish, occasions] = await Promise.all([
     getOwnWish(user.id, id),
-    listOwnOccasions(user.id),
+    listOccasionsOf(user.id),
   ]);
 
   // Un deseo ajeno tampoco llega hasta aqui: RLS solo deja leer los de la

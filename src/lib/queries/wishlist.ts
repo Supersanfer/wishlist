@@ -1,21 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
 
+import { listOccasionsOf } from "./occasions";
+
 export type WishlistItem = Tables<"wishlist_items">;
-export type Occasion = Tables<"occasions">;
 
 /** Un deseo con el nombre de su ocasion ya resuelto, listo para pintar. */
 export type WishWithOccasion = WishlistItem & { occasionName: string | null };
 
 /**
- * Deseos propios, de mas a menos prioritario y, a igualdad, los mas recientes
- * primero. El enum wish_priority esta declarado low < medium < high, asi que
- * ordenar descendente pone `high` arriba.
+ * Deseos de una persona, de mas a menos prioritario y, a igualdad, los mas
+ * recientes primero. El enum wish_priority esta declarado low < medium < high,
+ * asi que ordenar descendente pone `high` arriba.
  *
- * RLS ya limita la tabla a mis deseos y a los de mi pareja; el filtro por
- * owner_id es el que hace que esta consulta sea "mi lista" y no las dos.
+ * Sirve tanto para la lista propia como para la de la pareja: RLS limita la
+ * tabla a esas dos personas, y `ownerId` elige de cual de las dos se trata.
  */
-export async function listOwnWishes(ownerId: string): Promise<WishWithOccasion[]> {
+export async function listWishesOf(ownerId: string): Promise<WishWithOccasion[]> {
   const supabase = await createClient();
 
   const [wishes, occasions] = await Promise.all([
@@ -25,7 +26,7 @@ export async function listOwnWishes(ownerId: string): Promise<WishWithOccasion[]
       .eq("owner_id", ownerId)
       .order("priority", { ascending: false })
       .order("created_at", { ascending: false }),
-    listOwnOccasions(ownerId),
+    listOccasionsOf(ownerId),
   ]);
 
   if (wishes.error || !wishes.data) return [];
@@ -50,14 +51,4 @@ export async function getOwnWish(
     .eq("owner_id", ownerId)
     .maybeSingle();
   return data ?? null;
-}
-
-export async function listOwnOccasions(ownerId: string): Promise<Occasion[]> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("occasions")
-    .select("*")
-    .eq("owner_id", ownerId)
-    .order("occasion_date", { ascending: true });
-  return data ?? [];
 }

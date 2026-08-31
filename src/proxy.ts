@@ -5,7 +5,7 @@ import { env } from "@/lib/env";
 import { INVITE_CODE_PATTERN, PENDING_INVITE_COOKIE } from "@/lib/invite-cookie";
 
 /** Rutas que exigen sesion. El resto decide cada pagina. */
-const PRIVATE_PREFIXES = ["/dashboard", "/setup", "/wishlist"];
+const PRIVATE_PREFIXES = ["/dashboard", "/setup", "/wishlist", "/partner"];
 
 /**
  * Refresca el token de sesion de Supabase en cada navegacion y escribe las
