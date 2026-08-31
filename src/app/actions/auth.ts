@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { landingAfterAuth } from "@/lib/auth";
 import { friendlyAuthError } from "@/lib/errors";
+import { logSupabaseError } from "@/lib/log";
 import { siteOrigin } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,7 +29,8 @@ export async function signIn(_prev: AuthState, formData: FormData): Promise<Auth
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error || !data.user) {
-    return { error: friendlyAuthError(error?.message ?? "") };
+    logSupabaseError("signIn", error);
+    return { error: friendlyAuthError(error) };
   }
 
   redirect(await landingAfterAuth(data.user.id));
@@ -58,7 +60,8 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
   });
 
   if (error || !data.user) {
-    return { error: friendlyAuthError(error?.message ?? "") };
+    logSupabaseError("signUp", error);
+    return { error: friendlyAuthError(error) };
   }
 
   // Sin sesion => el proyecto exige confirmar el correo antes de entrar.
@@ -71,6 +74,9 @@ export async function signUp(_prev: AuthState, formData: FormData): Promise<Auth
 
 export async function signOut(): Promise<void> {
   const supabase = await createClient();
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  // Un fallo al cerrar sesion no debe atrapar a nadie en la app: las cookies se
+  // limpian igualmente y seguimos al login. Pero queda registrado.
+  if (error) logSupabaseError("signOut", error);
   redirect("/login");
 }

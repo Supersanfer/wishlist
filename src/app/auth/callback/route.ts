@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
+import { logSupabaseError } from "@/lib/log";
 import { createClient } from "@/lib/supabase/server";
 
 /**
@@ -19,9 +20,13 @@ export async function GET(request: Request) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) return NextResponse.redirect(new URL("/", url));
+    logSupabaseError("authCallback.exchangeCodeForSession", error);
   } else if (tokenHash && type) {
     const { error } = await supabase.auth.verifyOtp({ type, token_hash: tokenHash });
     if (!error) return NextResponse.redirect(new URL("/", url));
+    logSupabaseError("authCallback.verifyOtp", error);
+  } else {
+    logSupabaseError("authCallback", { message: "callback sin code ni token_hash" });
   }
 
   return NextResponse.redirect(new URL("/login", url));
