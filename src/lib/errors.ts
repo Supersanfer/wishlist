@@ -97,4 +97,18 @@ export function friendlyWishError(message: string): string {
   ]);
 }
 
+export function friendlyReservationError(message: string): string {
+  return match(message, [
+    ["gift_reservations_one_active_per_item", "Ese regalo ya lo tienes reservado."],
+    ["duplicate key", "Ese regalo ya lo tienes reservado."],
+    ["gift_reservations_not_self", "No puedes reservar tus propios deseos."],
+    ["violates foreign key", "Ese deseo ya no está disponible."],
+    ["violates row-level security", "No puedes reservar ese deseo."],
+    ["reasignar una reserva", "Esa reserva no se puede modificar."],
+    ["violates check constraint", "No hemos podido guardar el cambio."],
+    ["fetch failed", "No hemos podido conectar. Comprueba tu conexión."],
+    ["network", "No hemos podido conectar. Comprueba tu conexión."],
+  ]);
+}
+
 export { GENERIC as genericError };

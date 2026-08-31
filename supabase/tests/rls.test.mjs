@@ -483,6 +483,29 @@ await expectDenied("no se puede reservar en nombre de la pareja", anguita, () =>
     [itemB, bianca, bianca],
   ),
 );
+// Dana pertenece a otra pareja: el deseo de Bianca le es completamente ajeno.
+await expectDenied("no se puede reservar un deseo de otra pareja", dana, () =>
+  db.query(
+    `insert into public.gift_reservations (wishlist_item_id, item_owner_id, reserver_id)
+     values ($1, $2, $3)`,
+    [itemB, bianca, dana],
+  ),
+);
+{
+  const r = await as(dana, () =>
+    db.query("select * from public.gift_reservations where wishlist_item_id = $1", [itemB]),
+  );
+  if (r.rows.length === 0) ok("otra pareja no ve las reservas ajenas");
+  else fail("FUGA: reservas visibles a otra pareja", JSON.stringify(r.rows));
+}
+// La FK compuesta ata item_owner_id al dueño real del deseo: mentir no cuela.
+await expectDenied("no se puede falsear el item_owner_id de la reserva", anguita, () =>
+  db.query(
+    `insert into public.gift_reservations (wishlist_item_id, item_owner_id, reserver_id)
+     values ($1, $2, $3)`,
+    [itemB, anguita, anguita],
+  ),
+);
 await expectNoRowsAffected(
   "Bianca no puede modificar la reserva de Anguita",
   bianca,
