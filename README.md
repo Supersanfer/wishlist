@@ -1,68 +1,93 @@
 # Wishlist
 
-Una lista privada para dos: apunta lo que te hace ilusión y reserva su regalo
-sin que la otra persona se entere.
+**Una lista privada para dos.** Apunta lo que te hace ilusión, mira lo que le
+hace ilusión a tu pareja y reserva su regalo sin que se entere.
 
-## Qué es
+<p>
+  <img src="docs/screenshots/wishlist.png" alt="Lista personal" width="30%">
+  <img src="docs/screenshots/partner.png" alt="Lista de la pareja con un regalo reservado" width="30%">
+  <img src="docs/screenshots/occasions.png" alt="Ocasiones" width="30%">
+</p>
+
+## El problema
 
 Regalar bien es difícil por dos motivos opuestos. Si no preguntas, aciertas poco.
 Si preguntas, pierdes la sorpresa.
 
-Wishlist resuelve las dos mitades a la vez. Cada miembro de la pareja mantiene su
-propia lista de deseos, y ve la de la otra persona. Cuando eliges qué regalar, lo
-reservas — y **esa reserva es invisible para el dueño del deseo**. Él sigue viendo
-su lista exactamente igual que antes, sin marcas, sin contadores y sin errores que
-delaten nada. No es que la interfaz lo esconda: la base de datos no se lo cuenta.
+Wishlist resuelve las dos mitades a la vez: cada persona mantiene su lista y ve la
+de la otra, y cuando eliges qué regalar lo reservas **sin que quien lo recibe pueda
+descubrirlo**. Su lista sigue exactamente igual que antes.
 
-Está pensada para dos personas concretas, no para escalar. Por eso no tiene
-amigos, ni feed, ni recomendaciones, ni notificaciones.
+Está pensada para dos personas concretas, no para escalar. No tiene amigos, ni
+feed, ni recomendaciones, ni notificaciones.
 
 ## Funcionalidades
 
-- **Wishlist personal** — nombre, precio, enlace, prioridad, ocasión e imagen.
-- **Wishlist de la pareja** — en solo lectura; es donde eliges el regalo.
-- **Reservas privadas** — reservar, cancelar y marcar como comprado, siempre en
-  secreto para quien recibe.
-- **Wishlist conjunta** — viajes, planes y cosas para casa, sin propietario.
-- **Ocasiones** — cumpleaños, aniversarios y fechas señaladas, con la cuenta
-  atrás y compartidas con la pareja como contexto.
-- **Perfil** — nombre editable; el email es de solo lectura.
+- **Lista personal** — nombre, precio, enlace, prioridad, ocasión e imagen.
+- **Lista de la pareja** — en solo lectura; es donde eliges el regalo.
+- **Reservas privadas** — reservar, cancelar y marcar como comprado, en secreto.
+- **Lista conjunta** — viajes, planes y cosas para casa, sin propietario.
+- **Ocasiones** — cumpleaños y aniversarios, con cuenta atrás, compartidas con la
+  pareja como contexto.
 - **PWA** — instalable, con salida offline propia.
 
-## Capturas
+## Lo interesante: el secreto es del esquema, no de la interfaz
 
-_Pendientes._ La aplicación es privada y las capturas requieren datos reales;
-se añadirán con contenido de ejemplo.
+Esconder algo en React es trivial y no vale nada: basta abrir la pestaña de red.
+Aquí el dueño de un deseo **no puede** ver sus reservas porque la base de datos no
+se las devuelve, y eso se apoya en cuatro decisiones que se sostienen entre sí:
+
+1. `gift_reservations` tiene una única política de lectura, `reserver_id = auth.uid()`.
+   El dueño obtiene cero filas en `select`, en `count(*)`, en `exists` y en
+   cualquier `join` desde su propia lista.
+2. **Nada se denormaliza sobre el deseo.** No hay `is_reserved`, y reservar no toca
+   su `updated_at`: el deseo es idéntico byte a byte antes y después.
+3. La clave foránea es `on delete cascade`. Con `restrict`, borrar un deseo
+   reservado fallaría — y ese fallo, por sí solo, delataría la reserva.
+4. El dueño **no puede sondear el índice único**: la política de inserción le
+   impide reservar sus propios deseos, así que nunca ve la violación de unicidad
+   que revelaría una reserva existente.
+
+No hay vistas en `public`: una vista sin `security_invoker` se ejecutaría con los
+permisos de su propietario y se saltaría todo lo anterior.
+
+Las cuatro tienen su test. `npm run test:db` levanta un Postgres real y comprueba,
+entre otras cosas, que el error que recibe el dueño al intentar cada vía es de
+permisos y **no** un `duplicate key`.
 
 ## Stack
 
 Next.js 16 (App Router, Server Components y Server Actions) · React 19 ·
 TypeScript · Tailwind CSS v4 · Supabase (PostgreSQL, Auth y RLS) · Vercel.
 
-Sin librería de componentes, sin librería de iconos y sin librería de PWA: la
-iconografía son SVG propios y el service worker son 80 líneas.
+Sin librería de componentes, de iconos, de animación ni de PWA. La iconografía
+son trece SVG propios y el service worker son ochenta líneas. Las únicas
+dependencias de producción son `next`, `react` y `@supabase/*`.
 
-## Seguridad
+## Arquitectura
+
+```
+src/
+├── app/
+│   ├── (marketing)/     portada pública y privacidad
+│   ├── (auth)/          login y registro
+│   ├── (app)/           pantallas con sesión y pareja, con navegación inferior
+│   └── actions/         Server Actions: la única vía de escritura
+├── components/          kit de UI y sistema de diseño
+├── lib/
+│   ├── queries/         acceso a datos, centralizado
+│   └── supabase/        clientes de navegador y de servidor
+└── proxy.ts             refresco de sesión y protección de rutas
+supabase/
+├── migrations/          esquema y políticas RLS
+└── tests/               banco de pruebas de permisos
+```
 
 La autorización vive en Postgres, no en React. El filtrado en cliente es
-presentación; lo que decide quién ve qué son las políticas de Row Level Security.
+presentación; lo que decide quién ve qué son las políticas. La `service_role` no
+existe en este repositorio: la aplicación entera funciona con la clave pública.
 
-- **Supabase Auth** con email y contraseña. La sesión se refresca en `src/proxy.ts`
-  y la identidad se comprueba siempre con `getUser()`, que valida el JWT, nunca
-  con `getSession()`.
-- **RLS activa en las ocho tablas**, definida en la misma migración que las crea.
-- **Las reservas son secretas** y se apoyan en cuatro decisiones, no en una:
-  `gift_reservations` solo tiene política de lectura para quien reserva; nada de
-  su estado se denormaliza sobre el deseo; la clave foránea es `on delete cascade`
-  para que borrar un deseo reservado no falle y delate la reserva; y el dueño no
-  puede insertar reservas sobre sus propios deseos, así que nunca ve la violación
-  de unicidad que revelaría una existente. No hay vistas en `public`, que se
-  saltarían las políticas.
-- **La `service_role` no existe en este repositorio.** La aplicación entera
-  funciona con la clave pública; si algún día hiciera falta, sería solo en
-  servidor y jamás en el cliente.
-
-Detalle del modelo y del razonamiento: [`supabase/README.md`](supabase/README.md).
+Detalle del modelo: [`supabase/README.md`](supabase/README.md).
 
 ## Desarrollo
 
@@ -91,28 +116,31 @@ npx supabase link --project-ref <ref>
 npx supabase db push
 ```
 
-### Comandos
+## Tests
 
 | Comando | Qué hace |
 | --- | --- |
-| `npm run dev` | Servidor de desarrollo |
-| `npm run build` | Build de producción |
-| `npm run lint` | ESLint |
-| `npx tsc --noEmit` | Comprobación de tipos |
-| `npm run test:db` | 79 comprobaciones de RLS sobre Postgres real (PGlite, sin Docker) |
-| `npm run test:e2e` | Recorrido completo en un navegador real (crea usuarios de prueba) |
+| `npm run test:db` | 79 comprobaciones de permisos sobre Postgres real |
+| `npm run test:e2e` | 27 comprobaciones recorriendo la app en un navegador real |
+| `npm run lint` · `npx tsc --noEmit` · `npm run build` | Lo de siempre |
 
-`test:db` levanta Postgres 17 en WebAssembly, simula el entorno de Supabase
-(esquema `auth`, `auth.uid()`, roles `anon`/`authenticated`), aplica las
-migraciones y comprueba los permisos con cuatro usuarios en dos parejas. No
-necesita Docker ni conexión.
+`test:db` levanta **Postgres 17 en WebAssembly** (PGlite), simula el entorno de
+Supabase —esquema `auth`, `auth.uid()`, roles `anon` y `authenticated` con sus
+grants por defecto—, aplica las migraciones y prueba los permisos con cuatro
+usuarios repartidos en dos parejas. No necesita Docker, ni red, ni un proyecto
+Supabase: corre en unos segundos y en CI.
+
+`test:e2e` pilota un navegador real por CDP, sin dependencias, y recorre el
+producto de punta a punta: registro, emparejamiento, alta de deseos, reserva y la
+comprobación de que quien recibe no ve nada. Crea usuarios reales, así que se
+lanza a propósito.
 
 ## Deploy
 
 Vercel detecta Next.js sin configuración. Antes del primer despliegue hay que dar
-de alta las dos variables de entorno en Settings → Environment Variables, y en
-Supabase apuntar Site URL y Redirect URLs (`https://<dominio>/**`) al dominio de
-Vercel, o el enlace de confirmación de correo no vuelve a la aplicación.
+de alta las dos variables de entorno, y en Supabase apuntar Site URL y Redirect
+URLs (`https://<dominio>/**`) al dominio desplegado, o el enlace de confirmación
+de correo no vuelve a la aplicación.
 
 ## Roadmap
 
@@ -121,4 +149,4 @@ Vercel, o el enlace de confirmación de correo no vuelve a la aplicación.
 
 ## Licencia
 
-Sin licencia. Todos los derechos reservados.
+[MIT](LICENSE).
