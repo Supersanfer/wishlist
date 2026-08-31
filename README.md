@@ -122,7 +122,7 @@ npx supabase db push
 | --- | --- |
 | `npm run test:db` | 79 comprobaciones de permisos sobre Postgres real |
 | `npm run test:e2e` | 27 comprobaciones recorriendo la app en un navegador real |
-| `npm run lint` · `npx tsc --noEmit` · `npm run build` | Lo de siempre |
+| `npm run lint` · `npm run typecheck` · `npm run build` | Lo de siempre |
 
 `test:db` levanta **Postgres 17 en WebAssembly** (PGlite), simula el entorno de
 Supabase —esquema `auth`, `auth.uid()`, roles `anon` y `authenticated` con sus

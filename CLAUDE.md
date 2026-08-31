@@ -72,8 +72,11 @@ y son la única fuente: nada de valores de color sueltos en los componentes.
 
 ## Verificación
 
-Antes de dar por terminado un cambio: `npm run lint`, `npx tsc --noEmit` y
+Antes de dar por terminado un cambio: `npm run lint`, `npm run typecheck` y
 `npm run build`.
+
+`typecheck` ejecuta `next typegen` antes que `tsc`: `PageProps` y `LayoutProps`
+son tipos globales que genera Next, y sin ese paso fallan en un árbol limpio.
 
 - Si el cambio toca `supabase/migrations/`, además `npm run test:db` (banco de
   pruebas de RLS sobre Postgres real; añadir casos al añadir tablas o políticas).

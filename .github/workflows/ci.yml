@@ -29,8 +29,10 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # `next typegen` genera PageProps y LayoutProps, que son tipos globales
+      # producidos por Next. Sin ellos, tsc falla en un arbol recien clonado.
       - name: Types
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Build
         run: npm run build
