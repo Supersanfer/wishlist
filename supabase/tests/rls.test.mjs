@@ -402,6 +402,43 @@ await expectDenied("no se puede insertar en la pareja ajena", dana, () =>
     [coupleAB, dana],
   ),
 );
+// Sin propietario: quien no lo creo tambien puede crear, editar y borrar.
+{
+  const byBianca = (
+    await as(bianca, () =>
+      db.query(
+        `insert into public.shared_wishlist_items (couple_id, created_by, title)
+         values (public.current_couple_id(), $1, 'Cena de aniversario') returning id`,
+        [bianca],
+      ),
+    )
+  ).rows[0].id;
+  ok("Bianca tambien crea en la lista conjunta");
+
+  const upd = await as(anguita, () =>
+    db.query("update public.shared_wishlist_items set price_cents = 8000 where id = $1", [
+      byBianca,
+    ]),
+  );
+  if (upd.affectedRows === 1) ok("Anguita edita lo que creo Bianca");
+  else fail("edicion cruzada en la conjunta", `afectadas ${upd.affectedRows}`);
+
+  const del = await as(anguita, () =>
+    db.query("delete from public.shared_wishlist_items where id = $1", [byBianca]),
+  );
+  if (del.affectedRows === 1) ok("Anguita borra lo que creo Bianca");
+  else fail("borrado cruzado en la conjunta", `afectadas ${del.affectedRows}`);
+}
+await expectNoRowsAffected(
+  "otra pareja no puede editar la lista conjunta ajena",
+  dana,
+  "update public.shared_wishlist_items set title = 'Intruso'",
+);
+await expectNoRowsAffected(
+  "otra pareja no puede borrar la lista conjunta ajena",
+  dana,
+  "delete from public.shared_wishlist_items",
+);
 
 console.log("\n== reservas de regalos (secreto) ==");
 const resId = (

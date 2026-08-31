@@ -13,14 +13,18 @@ export const PRIORITY_LABEL: Record<WishPriority, string> = {
 
 export const CURRENCIES = ["EUR", "USD", "GBP"] as const;
 
-/** Campos normalizados, listos para insertar o actualizar. */
-export type WishFields = {
+/** Campos que comparten la wishlist personal y la conjunta. */
+export type ItemFields = {
   title: string;
   description: string | null;
   url: string | null;
   image_url: string | null;
   price_cents: number | null;
   currency: string;
+};
+
+/** Campos de un deseo personal: los comunes mas prioridad y ocasion. */
+export type WishFields = ItemFields & {
   priority: WishPriority;
   occasion_id: string | null;
 };
@@ -47,21 +51,18 @@ function parseUrl(raw: string): { url: string | null } | { error: string } {
 }
 
 /**
- * Valida y normaliza el formulario en el servidor. No se apoya en la validacion
- * del navegador: los mismos limites que el esquema (longitudes, precio no
- * negativo, esquema http/https) se comprueban aqui, y Postgres los vuelve a
- * comprobar con sus CHECK.
- *
- * La pertenencia de la ocasion NO se valida aqui: la garantiza la clave foranea
- * compuesta (occasion_id, owner_id) -> occasions(id, owner_id).
+ * Valida y normaliza los campos comunes en el servidor. No se apoya en la
+ * validacion del navegador: los mismos limites que el esquema (longitudes,
+ * precio no negativo, esquema http/https) se comprueban aqui, y Postgres los
+ * vuelve a comprobar con sus CHECK.
  */
-export function parseWishForm(formData: FormData): { fields: WishFields } | { error: string } {
+export function parseItemForm(formData: FormData): { fields: ItemFields } | { error: string } {
   const title = field(formData, "title");
-  if (!title) return { error: "El deseo necesita un nombre." };
+  if (!title) return { error: "Necesita un nombre." };
   if (title.length > 200) return { error: "El nombre es demasiado largo (máximo 200)." };
 
-  const rawDescription = field(formData, "description");
-  if (rawDescription.length > 2000) {
+  const description = field(formData, "description");
+  if (description.length > 2000) {
     return { error: "La descripción es demasiado larga (máximo 2000)." };
   }
 
@@ -86,24 +87,36 @@ export function parseWishForm(formData: FormData): { fields: WishFields } | { er
   const currency = field(formData, "currency").toUpperCase() || "EUR";
   if (!/^[A-Z]{3}$/.test(currency)) return { error: "Esa moneda no es válida." };
 
+  return {
+    fields: {
+      title,
+      description: description || null,
+      url: url.url,
+      image_url: imageUrl.url,
+      price_cents: priceCents,
+      currency,
+    },
+  };
+}
+
+/**
+ * Valida el formulario de un deseo personal. Añade prioridad y ocasion a los
+ * campos comunes.
+ *
+ * La pertenencia de la ocasion NO se valida aqui: la garantiza la clave foranea
+ * compuesta (occasion_id, owner_id) -> occasions(id, owner_id).
+ */
+export function parseWishForm(formData: FormData): { fields: WishFields } | { error: string } {
+  const common = parseItemForm(formData);
+  if ("error" in common) return common;
+
   const priority = field(formData, "priority") as WishPriority;
   if (!PRIORITIES.includes(priority)) return { error: "Esa prioridad no es válida." };
 
   const rawOccasion = field(formData, "occasion_id");
   if (rawOccasion && !UUID.test(rawOccasion)) return { error: "Esa ocasión no es válida." };
 
-  return {
-    fields: {
-      title,
-      description: rawDescription || null,
-      url: url.url,
-      image_url: imageUrl.url,
-      price_cents: priceCents,
-      currency,
-      priority,
-      occasion_id: rawOccasion || null,
-    },
-  };
+  return { fields: { ...common.fields, priority, occasion_id: rawOccasion || null } };
 }
 
 /** Formatea un precio guardado en centimos. */

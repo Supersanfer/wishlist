@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { createWish } from "@/app/actions/wishlist";
+import { AppPage, PageHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { listOccasionsOf } from "@/lib/queries/occasions";
 import { WishForm } from "../wish-form";
@@ -12,13 +13,15 @@ export default async function NewWishPage() {
   const occasions = await listOccasionsOf(user.id);
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-6 py-8">
-      <header className="flex items-baseline justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Nuevo deseo</h1>
-        <Link href="/wishlist" className="text-sm text-muted">
-          Cancelar
-        </Link>
-      </header>
+    <AppPage>
+      <PageHeader
+        title="Nuevo deseo"
+        action={
+          <Link href="/wishlist" className="pt-1 text-sm text-muted">
+            Cancelar
+          </Link>
+        }
+      />
 
       <WishForm
         action={createWish}
@@ -26,6 +29,6 @@ export default async function NewWishPage() {
         submitLabel="Guardar deseo"
         pendingLabel="Guardando…"
       />
-    </main>
+    </AppPage>
   );
 }

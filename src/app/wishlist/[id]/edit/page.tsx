@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { updateWish } from "@/app/actions/wishlist";
+import { AppPage, PageHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { listOccasionsOf } from "@/lib/queries/occasions";
 import { getOwnWish } from "@/lib/queries/wishlist";
@@ -24,13 +25,15 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
   if (!wish) notFound();
 
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-6 px-6 py-8">
-      <header className="flex items-baseline justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">Editar deseo</h1>
-        <Link href="/wishlist" className="text-sm text-muted">
-          Cancelar
-        </Link>
-      </header>
+    <AppPage>
+      <PageHeader
+        title="Editar deseo"
+        action={
+          <Link href="/wishlist" className="pt-1 text-sm text-muted">
+            Cancelar
+          </Link>
+        }
+      />
 
       <WishForm
         action={updateWish}
@@ -41,6 +44,6 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
       />
 
       <DeleteWish id={wish.id} />
-    </main>
+    </AppPage>
   );
 }
