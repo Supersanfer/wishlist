@@ -15,7 +15,7 @@ export default async function SetupPage() {
   const user = await requireUser();
   const state = await getCoupleState(user.id);
 
-  if (state.isComplete) redirect("/dashboard");
+  if (state.isComplete) redirect("/wishlist");
 
   // Ya tiene pareja creada pero sigue solo: toca invitar.
   if (state.coupleId) {

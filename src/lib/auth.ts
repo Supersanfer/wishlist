@@ -56,8 +56,8 @@ export async function requirePairedUser(): Promise<User> {
 }
 
 /** Destino segun el estado del usuario: pareja completa -> dashboard, si no -> setup. */
-export function destinationFor(state: CoupleState): "/dashboard" | "/setup" {
-  return state.isComplete ? "/dashboard" : "/setup";
+export function destinationFor(state: CoupleState): "/wishlist" | "/setup" {
+  return state.isComplete ? "/wishlist" : "/setup";
 }
 
 /**

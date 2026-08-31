@@ -74,7 +74,7 @@ export default async function JoinPage({ params }: PageProps<"/join/[code]">) {
             ? "Esta es tu propia invitación. Compártela con tu pareja para que la abra desde su móvil."
             : "Ya formas parte de una pareja, así que no puedes aceptar esta invitación."}
         </Alert>
-        <Link href={state.isComplete ? "/dashboard" : "/setup"} className="block">
+        <Link href={state.isComplete ? "/wishlist" : "/setup"} className="block">
           <Button variant="secondary">{state.isComplete ? "Ir al inicio" : "Volver"}</Button>
         </Link>
       </Shell>

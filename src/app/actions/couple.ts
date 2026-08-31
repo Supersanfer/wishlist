@@ -57,5 +57,5 @@ export async function joinCouple(
   const cookieStore = await cookies();
   cookieStore.delete(PENDING_INVITE_COOKIE);
 
-  redirect("/dashboard");
+  redirect("/wishlist");
 }

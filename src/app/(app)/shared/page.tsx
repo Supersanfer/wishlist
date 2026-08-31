@@ -48,7 +48,7 @@ export default async function SharedPage({ searchParams }: PageProps<"/shared">)
           </ul>
           <Link
             href="/shared/new"
-            className="sticky bottom-6 flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground shadow-lg"
+            className="bottom-above-nav sticky flex h-12 items-center justify-center rounded-2xl bg-accent px-6 font-medium text-accent-foreground shadow-lg"
           >
             + Añadir algo juntos
           </Link>

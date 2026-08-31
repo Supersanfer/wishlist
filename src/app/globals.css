@@ -9,6 +9,7 @@
   --accent: #db2777;
   --accent-foreground: #ffffff;
   --danger: #b91c1c;
+  --nav-height: 4.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,8 +41,18 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  /* Mobile-first: respetar notch y barra inferior en modo standalone. */
+  /* Mobile-first: respetar el notch. El margen inferior lo pone cada pantalla,
+     porque la barra de navegacion es fija y gestiona su propia safe area. */
   padding-top: env(safe-area-inset-top);
-  padding-bottom: env(safe-area-inset-bottom);
   overscroll-behavior-y: none;
+}
+
+/* Hueco para que la barra inferior fija no tape el contenido. */
+.pb-nav {
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
+}
+
+/* Boton flotante que descansa justo encima de la barra. */
+.bottom-above-nav {
+  bottom: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1rem);
 }
