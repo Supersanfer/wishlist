@@ -48,6 +48,7 @@ export function WishCard({
   highlight = false,
   footer,
   index = 0,
+  anchorId,
 }: {
   wish: WishCardData;
   editHref?: Route;
@@ -55,13 +56,17 @@ export function WishCard({
   highlight?: boolean;
   footer?: ReactNode;
   index?: number;
+  /** Ancla para desplazarse a este deseo (p. ej. desde "Ver deseo"). */
+  anchorId?: string;
 }) {
   const productHref = safeExternalHref(wish.url);
   const hasActionRow = Boolean(productHref || editHref);
 
   return (
     <li
-      className="animate-rise relative overflow-hidden rounded-md border border-border bg-surface"
+      id={anchorId}
+      tabIndex={anchorId ? -1 : undefined}
+      className="animate-rise relative scroll-mt-6 overflow-hidden rounded-md border border-border bg-surface outline-none"
       style={{ animationDelay: `${Math.min(index, 5) * 40}ms` }}
     >
       {highlight ? <span aria-hidden className="absolute inset-0 bg-accent-soft/60" /> : null}

@@ -163,6 +163,63 @@ body {
   animation: rise 260ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
+/* Hoja de "Elige por mí": pegada abajo en móvil (alcance con el pulgar) y
+   centrada en pantallas grandes. El relieve lo da el borde, no una sombra. */
+.picker-sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 30rem;
+  max-height: 88vh;
+  border: 1px solid var(--border-strong);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface);
+  color: var(--foreground);
+  padding: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.picker-sheet::backdrop {
+  background: rgb(20 16 14 / 0.5);
+}
+
+@media (min-width: 640px) {
+  .picker-sheet {
+    margin: auto;
+    border-bottom: 1px solid var(--border-strong);
+    border-radius: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .picker-sheet[open] {
+    animation: sheet-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Destello breve del deseo al pulsar "Ver deseo": un anillo del acento que se
+   desvanece. box-shadow sigue el radio de la tarjeta y no altera el layout. */
+@keyframes pick-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  20% {
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+}
+
+.pick-flash {
+  animation: pick-flash 1.5s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

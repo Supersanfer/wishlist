@@ -33,6 +33,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test:db": "node supabase/tests/rls.test.mjs",
+    "test:unit": "node --test \"src/**/*.test.ts\"",
     "verify:remote": "node --env-file=.env.local scripts/verify-remote-auth.mjs",
     "test:e2e": "node --env-file=.env.local scripts/e2e-mvp.mjs"
   },

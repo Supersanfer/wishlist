@@ -8,6 +8,7 @@ import { getCoupleState, requirePairedUser } from "@/lib/auth";
 import { displayNameOf, getProfile } from "@/lib/queries/profiles";
 import { myActiveReservationsByWish } from "@/lib/queries/reservations";
 import { listWishesOf } from "@/lib/queries/wishlist";
+import { GiftPicker, type PickableWish } from "./gift-picker";
 import { ReserveControls } from "./reserve-controls";
 
 export const metadata = { title: "Su lista" };
@@ -31,6 +32,21 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
   const visible = onlyMine ? wishes.filter((wish) => reservations.has(wish.id)) : wishes;
   const name = displayNameOf(partner);
 
+  // Deseos que puedo elegir de regalo: los que veo, menos los que yo ya he
+  // reservado o comprado. Se calcula aquí, sin consultas extra ni tocar
+  // reservas ajenas; el sorteo ocurre en el cliente sobre esta lista.
+  const pickable: PickableWish[] = wishes
+    .filter((wish) => !reservations.has(wish.id))
+    .map((wish) => ({
+      id: wish.id,
+      priority: wish.priority,
+      price_cents: wish.price_cents,
+      title: wish.title,
+      currency: wish.currency,
+      url: wish.url,
+      occasionName: wish.occasionName,
+    }));
+
   return (
     <AppPage>
       <PageHeader title={`Lo que quiere ${name}`} subtitle="Reserva un regalo. No se enterará." />
@@ -43,6 +59,8 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
         />
       ) : (
         <>
+          {pickable.length > 0 ? <GiftPicker wishes={pickable} /> : null}
+
           {reservedCount > 0 ? (
             <nav aria-label="Filtro" className="flex gap-2">
               <Link
@@ -81,6 +99,7 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
                   key={wish.id}
                   wish={wish}
                   index={index}
+                  anchorId={`wish-${wish.id}`}
                   highlight={Boolean(reservation)}
                   eyebrow={eyebrow}
                   footer={<ReserveControls wishId={wish.id} reservation={reservation} />}

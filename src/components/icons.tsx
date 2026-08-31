@@ -112,12 +112,37 @@ export function ExternalLinkIcon(props: IconProps) {
   );
 }
 
+/** Elige por mí: un dado con cinco puntos. Los puntos van rellenos a propósito. */
+export function DiceIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <rect x="3.75" y="3.75" width="16.5" height="16.5" rx="4" />
+      <g fill="currentColor" stroke="none">
+        <circle cx="8" cy="8" r="1.15" />
+        <circle cx="16" cy="8" r="1.15" />
+        <circle cx="12" cy="12" r="1.15" />
+        <circle cx="8" cy="16" r="1.15" />
+        <circle cx="16" cy="16" r="1.15" />
+      </g>
+    </Icon>
+  );
+}
+
 /** Enlace: dos eslabones de cadena. */
 export function LinkIcon(props: IconProps) {
   return (
     <Icon {...props}>
       <path d="M10 13.5a3.5 3.5 0 0 0 5 0l3-3a3.5 3.5 0 0 0-5-5l-1.5 1.5" />
       <path d="M14 10.5a3.5 3.5 0 0 0-5 0l-3 3a3.5 3.5 0 0 0 5 5L12.5 17" />
+    </Icon>
+  );
+}
+
+/** Cerrar: una cruz. */
+export function XIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M6 6l12 12M18 6 6 18" />
     </Icon>
   );
 }
