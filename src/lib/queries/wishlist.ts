@@ -2,11 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import type { Tables } from "@/types/database";
 
 import { listOccasionsOf } from "./occasions";
+import { resolveItemImageUrl } from "./storage";
 
 export type WishlistItem = Tables<"wishlist_items">;
 
 /** Un deseo con el nombre de su ocasion ya resuelto, listo para pintar. */
 export type WishWithOccasion = WishlistItem & { occasionName: string | null };
+
+/** Un deseo con la URL de su imagen ya resuelta. */
+export type WishWithImage = WishWithOccasion & { imageUrl: string | null };
 
 /**
  * Deseos de una persona, de mas a menos prioritario y, a igualdad, los mas
@@ -51,4 +55,15 @@ export async function getOwnWish(
     .eq("owner_id", ownerId)
     .maybeSingle();
   return data ?? null;
+}
+
+/** Lista propia o de la pareja con las imagenes resueltas. */
+export async function listWishesWithImages(ownerId: string): Promise<WishWithImage[]> {
+  const wishes = await listWishesOf(ownerId);
+  return Promise.all(
+    wishes.map(async (wish) => ({
+      ...wish,
+      imageUrl: await resolveItemImageUrl(wish.image_path, wish.image_url),
+    })),
+  );
 }

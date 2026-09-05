@@ -8,7 +8,7 @@ import { buttonClass } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
-import { listSharedItems } from "@/lib/queries/shared";
+import { listSharedItemsWithImages } from "@/lib/queries/shared";
 
 export const metadata = { title: "Juntos" };
 
@@ -20,7 +20,7 @@ const FLASH = {
 
 export default async function SharedPage({ searchParams }: PageProps<"/shared">) {
   await requirePairedUser();
-  const [items, params] = await Promise.all([listSharedItems(), searchParams]);
+  const [items, params] = await Promise.all([listSharedItemsWithImages(), searchParams]);
   const flash = flashMessage(params, FLASH);
 
   return (

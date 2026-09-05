@@ -412,6 +412,61 @@ await expectDenied("no se puede mover un deseo a la ocasion de la pareja", angui
   ]);
 });
 
+console.log("\n== imagenes de deseos ==");
+{
+  const withImage = (
+    await as(bianca, () =>
+      db.query(
+        `insert into public.wishlist_items (owner_id, title, image_path)
+         values ($1, 'Con foto', 'wishlist/couple/bianca/item/foto.jpeg') returning id`,
+        [bianca],
+      ),
+    )
+  ).rows[0].id;
+  ok("Bianca crea un deseo con image_path");
+
+  {
+    const r = await as(anguita, () =>
+      db.query("select image_path from public.wishlist_items where id = $1", [withImage]),
+    );
+    if (r.rows[0]?.image_path === "wishlist/couple/bianca/item/foto.jpeg")
+      ok("Anguita ve la ruta de la imagen de Bianca");
+    else fail("lectura de image_path", JSON.stringify(r.rows));
+  }
+
+  await expectNoRowsAffected(
+    "Anguita no puede cambiar el image_path de Bianca",
+    anguita,
+    "update public.wishlist_items set image_path = 'hackeado' where id = $1",
+    [withImage],
+  );
+
+  const sharedWithImage = (
+    await as(anguita, () =>
+      db.query(
+        `insert into public.shared_wishlist_items (couple_id, created_by, title, image_path)
+         values (public.current_couple_id(), $1, 'Viaje con foto', 'shared/couple/item/foto.jpeg') returning id`,
+        [anguita],
+      ),
+    )
+  ).rows[0].id;
+  ok("Anguita crea un item conjunto con image_path");
+
+  await expectOk("Bianca edita el image_path del item conjunto", bianca, () =>
+    db.query(
+      "update public.shared_wishlist_items set image_path = 'shared/couple/item/otra.jpeg' where id = $1",
+      [sharedWithImage],
+    ),
+  );
+
+  await expectNoRowsAffected(
+    "Dana no puede editar el image_path de la lista conjunta ajena",
+    dana,
+    "update public.shared_wishlist_items set image_path = 'hackeado' where id = $1",
+    [sharedWithImage],
+  );
+}
+
 console.log("\n== wishlist conjunta ==");
 const sharedId = (
   await as(anguita, () =>
@@ -502,20 +557,20 @@ ok("Anguita reserva el deseo de Bianca");
   if (r.rows[0].n === 0) ok("Bianca NO ve la reserva (count agregado)");
   else fail("FUGA: count", JSON.stringify(r.rows));
 }
-{
-  const r = await as(bianca, () =>
-    db.query(
-      `select i.title, r.id as reserva
-       from public.wishlist_items i
-       left join public.gift_reservations r on r.wishlist_item_id = i.id
-       where i.owner_id = $1`,
-      [bianca],
-    ),
-  );
-  if (r.rows.length === 1 && r.rows[0].reserva === null)
-    ok("Bianca NO ve la reserva (join desde su wishlist)");
-  else fail("FUGA: join", JSON.stringify(r.rows));
-}
+  {
+    const r = await as(bianca, () =>
+      db.query(
+        `select i.title, r.id as reserva
+         from public.wishlist_items i
+         left join public.gift_reservations r on r.wishlist_item_id = i.id
+         where i.owner_id = $1`,
+        [bianca],
+      ),
+    );
+    if (r.rows.length >= 1 && r.rows.every((row) => row.reserva === null))
+      ok("Bianca NO ve la reserva (join desde su wishlist)");
+    else fail("FUGA: join", JSON.stringify(r.rows));
+  }
 {
   const r = await as(bianca, () =>
     db.query(

@@ -287,6 +287,7 @@ export type Database = {
           currency: string
           description: string | null
           id: string
+          image_path: string | null
           image_url: string | null
           price_cents: number | null
           title: string
@@ -300,6 +301,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          image_path?: string | null
           image_url?: string | null
           price_cents?: number | null
           title: string
@@ -313,6 +315,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          image_path?: string | null
           image_url?: string | null
           price_cents?: number | null
           title?: string
@@ -342,6 +345,7 @@ export type Database = {
           currency: string
           description: string | null
           id: string
+          image_path: string | null
           image_url: string | null
           occasion_id: string | null
           owner_id: string
@@ -356,6 +360,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          image_path?: string | null
           image_url?: string | null
           occasion_id?: string | null
           owner_id: string
@@ -370,6 +375,7 @@ export type Database = {
           currency?: string
           description?: string | null
           id?: string
+          image_path?: string | null
           image_url?: string | null
           occasion_id?: string | null
           owner_id?: string

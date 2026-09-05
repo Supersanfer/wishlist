@@ -20,6 +20,7 @@ export type ItemFields = {
   description: string | null;
   url: string | null;
   image_url: string | null;
+  image_path: string | null;
   price_cents: number | null;
   currency: string;
 };
@@ -98,6 +99,7 @@ export function parseItemForm(formData: FormData): { fields: ItemFields } | { er
       description: description || null,
       url: url.url,
       image_url: imageUrl.url,
+      image_path: null,
       price_cents: price.cents,
       currency,
     },

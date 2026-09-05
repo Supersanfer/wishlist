@@ -18,6 +18,11 @@ export type WishCardData = {
   occasionName?: string | null;
 };
 
+/** Imagen ya resuelta: URL firmada de Storage o URL externa. */
+export type ResolvedWishCardData = Omit<WishCardData, "image_url"> & {
+  imageUrl: string | null;
+};
+
 function Dot() {
   return (
     <span aria-hidden className="text-muted/40">
@@ -50,7 +55,7 @@ export function WishCard({
   index = 0,
   anchorId,
 }: {
-  wish: WishCardData;
+  wish: ResolvedWishCardData;
   editHref?: Route;
   eyebrow?: string;
   highlight?: boolean;
@@ -103,12 +108,12 @@ export function WishCard({
             ) : null}
           </div>
 
-          {wish.image_url ? (
-            // <img> a propósito: usar next/image obligaría a declarar remotePatterns
-            // abiertos, que convierte el optimizador en un proxy de imágenes ajeno.
+          {wish.imageUrl ? (
+            // <img> a proposito: usar next/image obligaria a declarar remotePatterns
+            // abiertos, que convierte el optimizador en un proxy de imagenes ajeno.
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={wish.image_url}
+              src={wish.imageUrl}
               alt=""
               loading="lazy"
               className="size-14 shrink-0 self-start rounded-sm border border-border object-cover"

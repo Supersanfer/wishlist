@@ -16,12 +16,14 @@ export function WishForm({
   action,
   occasions,
   wish,
+  imagePreviewUrl,
   submitLabel,
   pendingLabel,
 }: {
   action: Action;
   occasions: Occasion[];
   wish?: WishlistItem;
+  imagePreviewUrl?: string | null;
   submitLabel: string;
   pendingLabel: string;
 }) {
@@ -33,6 +35,7 @@ export function WishForm({
 
       <ItemFields
         item={wish}
+        imagePreviewUrl={imagePreviewUrl}
         titleLabel="¿Qué te apetece?"
         titlePlaceholder="Cafetera italiana"
         autoFocus={!wish}

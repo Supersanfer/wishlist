@@ -5,6 +5,7 @@ import { DeleteItem } from "@/components/delete-item";
 import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
 import { listOccasionsOf } from "@/lib/queries/occasions";
+import { resolveItemImageUrl } from "@/lib/queries/storage";
 import { getOwnWish } from "@/lib/queries/wishlist";
 import { WishForm } from "../../wish-form";
 
@@ -23,6 +24,8 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
   // pareja, y getOwnWish ademas filtra por owner_id.
   if (!wish) notFound();
 
+  const imagePreviewUrl = await resolveItemImageUrl(wish.image_path, wish.image_url);
+
   return (
     <AppPage>
       <FormHeader title="Editar deseo" backTo="/wishlist" />
@@ -31,6 +34,7 @@ export default async function EditWishPage({ params }: PageProps<"/wishlist/[id]
         action={updateWish}
         occasions={occasions}
         wish={wish}
+        imagePreviewUrl={imagePreviewUrl}
         submitLabel="Guardar cambios"
         pendingLabel="Guardando…"
       />
