@@ -172,6 +172,25 @@ export function CalendarIcon(props: IconProps) {
   );
 }
 
+/** Camara / galeria para anadir foto. */
+export function CameraIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M3 8.5h3l1.5-2.5h7l1.5 2.5h3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-8a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13.5" r="3.25" />
+    </Icon>
+  );
+}
+
+/** Papelera para eliminar foto. */
+export function TrashIcon(props: IconProps) {
+  return (
+    <Icon {...props}>
+      <path d="M4 7h16M10 11v6M14 11v6M6 7l1-2h10l1 2" />
+    </Icon>
+  );
+}
+
 export function PencilIcon(props: IconProps) {
   return (
     <Icon {...props}>

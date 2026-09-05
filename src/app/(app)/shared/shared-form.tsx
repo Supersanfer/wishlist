@@ -12,11 +12,13 @@ type Action = (state: ActionState, formData: FormData) => Promise<ActionState>;
 export function SharedForm({
   action,
   item,
+  imagePreviewUrl,
   submitLabel,
   pendingLabel,
 }: {
   action: Action;
   item?: SharedItem;
+  imagePreviewUrl?: string | null;
   submitLabel: string;
   pendingLabel: string;
 }) {
@@ -28,6 +30,7 @@ export function SharedForm({
 
       <ItemFields
         item={item}
+        imagePreviewUrl={imagePreviewUrl}
         titleLabel="¿Qué queréis?"
         titlePlaceholder="Viaje a Japón"
         autoFocus={!item}

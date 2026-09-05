@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { ChevronDownIcon, LinkIcon } from "@/components/icons";
+import { ImageUpload } from "@/components/image-upload";
 import { Field, Select, Textarea } from "@/components/ui";
 import { CURRENCIES } from "@/lib/wish-input";
 
@@ -9,6 +10,7 @@ export type ItemDefaults = {
   description?: string | null;
   url?: string | null;
   image_url?: string | null;
+  image_path?: string | null;
   price_cents?: number | null;
   currency?: string | null;
 };
@@ -28,18 +30,20 @@ function priceValue(cents: number | null | undefined): string {
  */
 export function ItemFields({
   item,
+  imagePreviewUrl,
   titleLabel,
   titlePlaceholder,
   autoFocus,
   children,
 }: {
   item?: ItemDefaults;
+  imagePreviewUrl?: string | null;
   titleLabel: string;
   titlePlaceholder: string;
   autoFocus?: boolean;
   children?: ReactNode;
 }) {
-  const hasExtras = Boolean(item?.description || item?.image_url);
+  const hasExtras = Boolean(item?.description || item?.image_url || item?.image_path);
 
   return (
     <>
@@ -100,6 +104,8 @@ export function ItemFields({
             placeholder="Color, talla, dónde lo viste…"
             maxLength={2000}
           />
+
+          <ImageUpload previewUrl={imagePreviewUrl} />
 
           <Field
             label="Imagen (URL)"

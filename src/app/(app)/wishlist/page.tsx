@@ -6,7 +6,7 @@ import { buttonClass } from "@/components/ui";
 import { WishCard } from "@/components/wish-card";
 import { requirePairedUser } from "@/lib/auth";
 import { flashMessage } from "@/lib/flash";
-import { listWishesOf } from "@/lib/queries/wishlist";
+import { listWishesWithImages } from "@/lib/queries/wishlist";
 import Link from "next/link";
 
 export const metadata = { title: "Mi lista" };
@@ -19,7 +19,7 @@ const FLASH = {
 
 export default async function WishlistPage({ searchParams }: PageProps<"/wishlist">) {
   const user = await requirePairedUser();
-  const [wishes, params] = await Promise.all([listWishesOf(user.id), searchParams]);
+  const [wishes, params] = await Promise.all([listWishesWithImages(user.id), searchParams]);
   const flash = flashMessage(params, FLASH);
 
   return (

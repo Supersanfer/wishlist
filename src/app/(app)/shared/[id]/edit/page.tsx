@@ -4,6 +4,7 @@ import { deleteSharedItem, updateSharedItem } from "@/app/actions/shared";
 import { DeleteItem } from "@/components/delete-item";
 import { AppPage, FormHeader } from "@/components/page-shell";
 import { requirePairedUser } from "@/lib/auth";
+import { resolveItemImageUrl } from "@/lib/queries/storage";
 import { getSharedItem } from "@/lib/queries/shared";
 import { SharedForm } from "../../shared-form";
 
@@ -15,6 +16,7 @@ export default async function EditSharedPage({ params }: PageProps<"/shared/[id]
 
   const item = await getSharedItem(id);
   if (!item) notFound();
+  const imagePreviewUrl = await resolveItemImageUrl(item.image_path, item.image_url);
 
   return (
     <AppPage>
@@ -22,6 +24,7 @@ export default async function EditSharedPage({ params }: PageProps<"/shared/[id]
       <SharedForm
         action={updateSharedItem}
         item={item}
+        imagePreviewUrl={imagePreviewUrl}
         submitLabel="Guardar cambios"
         pendingLabel="Guardando…"
       />

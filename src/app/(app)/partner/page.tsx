@@ -7,7 +7,7 @@ import { WishCard } from "@/components/wish-card";
 import { getCoupleState, requirePairedUser } from "@/lib/auth";
 import { displayNameOf, getProfile } from "@/lib/queries/profiles";
 import { myActiveReservationsByWish } from "@/lib/queries/reservations";
-import { listWishesOf } from "@/lib/queries/wishlist";
+import { listWishesWithImages } from "@/lib/queries/wishlist";
 import { GiftPicker, type PickableWish } from "./gift-picker";
 import { ReserveControls } from "./reserve-controls";
 
@@ -22,7 +22,7 @@ export default async function PartnerPage({ searchParams }: PageProps<"/partner"
 
   const [partner, wishes, reservations, params] = await Promise.all([
     getProfile(state.partnerId),
-    listWishesOf(state.partnerId),
+    listWishesWithImages(state.partnerId),
     myActiveReservationsByWish(),
     searchParams,
   ]);
