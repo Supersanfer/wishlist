@@ -46,5 +46,8 @@ function friendlyStorageError(message: string): string {
   if (lower.includes("row-level security") || lower.includes("policy")) {
     return "No tienes permiso para subir esa imagen.";
   }
+  if (lower.includes("bucket not found")) {
+    return "La base de datos no tiene aplicada la última actualización. Aplícala en Supabase y vuelve a intentarlo.";
+  }
   return "No se ha podido guardar la imagen. Vuelve a intentarlo.";
 }

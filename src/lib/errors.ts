@@ -84,6 +84,13 @@ export function friendlyCoupleError(message: string): string {
 
 export function friendlyWishError(message: string): string {
   return match(message, [
+    // PostgREST devuelve "Could not find the ... in the schema cache" cuando la
+    // base de datos no tiene aplicada una migracion que el codigo ya usa. Sin
+    // este caso, un guardado fallido se muestra como un generico inutil.
+    [
+      "schema cache",
+      "La base de datos no tiene aplicada la última actualización. Aplícala en Supabase y vuelve a intentarlo.",
+    ],
     // FK compuesta (occasion_id, owner_id) -> occasions(id, owner_id).
     ["wishlist_items_occasion_same_owner", "Esa ocasión no es tuya."],
     ["violates foreign key", "Esa ocasión ya no existe."],
